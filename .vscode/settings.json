@@ -19,5 +19,10 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
   },
+  "[python]": {
+    "editor.wordBasedSuggestions": false,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
   "eslint.run": "onSave"
 }
