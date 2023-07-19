@@ -1,0 +1,206 @@
+service: ${self:custom.namespace}-backend-${self:custom.version}
+
+custom:
+  namespace: bc-gay
+  version: v0
+  user_pool_client_hosted_ui_domain: brittanyandcaleb${self:custom.version}
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: ${opt:stage, 'devl'}
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    # Creates a role that allows Cognito to send SES messages
+    # BCSESRole:
+    #   Type: "AWS::IAM::Role"
+    #   Properties:
+    #     AssumeRolePolicyDocument:
+    #       Version: "2012-10-17"
+    #       Statement:
+    #         - Effect: "Allow"
+    #           Principal:
+    #             Service:
+    #               - "cognito-idp.amazonaws.com"
+    #           Action:
+    #             - "sts:AssumeRole"
+    #     Policies:
+    #       - PolicyName: "CognitoSESPolicy"
+    #         PolicyDocument:
+    #           Version: "2012-10-17"
+    #           Statement:
+    #             - Effect: "Allow"
+    #               Action: "ses:publish"
+    #               Resource: "*"
+
+    BCCognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:service}-${self:provider.stage}-user-pool
+        AutoVerifiedAttributes:
+          - email
+        VerificationMessageTemplate:
+          DefaultEmailOption: CONFIRM_WITH_CODE
+        MfaConfiguration: 'OFF'
+        EmailConfiguration:
+          SourceArn: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/calebgregory@gmail.com
+          ReplyToEmailAddress: calebgregory@gmail.com
+          EmailSendingAccount: DEVELOPER
+          From: 'Caleb Gregory <calebgregory@gmail.com>'
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: false
+          UnusedAccountValidityDays: 7
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Priority: 1
+              Name: verified_email
+            - Priority: 2
+              Name: verified_phone_number
+
+    # this is required for using the Hosted UI for sign in
+    BCUserPoolClientHostedUIDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        UserPoolId:
+          Ref: BCCognitoUserPool
+        Domain: ${self:custom.user_pool_client_hosted_ui_domain}
+
+    BCCognitoUserPoolIdentityProviderGoogle:
+      Type: AWS::Cognito::UserPoolIdentityProvider
+      Properties:
+        ProviderName: Google # this _must_ = 'Google' https://github.com/hashicorp/terraform-provider-aws/issues/4822
+        ProviderType: Google
+        ProviderDetails:
+          client_id: ${env:GOOGLE_CLIENT_ID}
+          client_secret: ${env:GOOGLE_CLIENT_SECRET}
+          authorize_scopes: email profile openid
+        AttributeMapping: {
+          "email_verified": "email_verified",
+          "phone_number": "phoneNumbers",
+          "given_name": "given_name",
+          "family_name": "family_name",
+          "name": "name",
+          "email": "email",
+          "username": "sub"
+        }
+        UserPoolId:
+          Ref: BCCognitoUserPool
+
+    BCCognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:service}-user-pool-client-web-${self:provider.stage}
+        GenerateSecret: false
+        UserPoolId:
+          Ref: "BCCognitoUserPool"
+        RefreshTokenValidity: 30
+        SupportedIdentityProviders:
+          # - COGNITO
+          - Google
+        CallbackURLs:
+          - https://brittanyandcaleb.gay
+          - https://localhost:3000
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthScopes:
+          - email
+          - openid
+          - phone
+          - profile
+        AllowedOAuthFlowsUserPoolClient: true
+
+    BCDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-table-BCApp-v0
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    BCLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:service}-${self:provider.stage}-lambda-role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+
+        Policies:
+          - PolicyName: ${self:service}-${self:provider.stage}-policy-DynamoDBWriteAccess
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - 'Fn::Join':
+                      - ':'
+                      -
+                        - 'arn:aws:logs'
+                        - Ref: 'AWS::Region'
+                        - Ref: 'AWS::AccountId'
+                        - 'log-group:/aws/lambda/*:*:*'
+                - Effect: Allow
+                  Action:
+                    - dynamodb:DescribeTable
+                    - dynamodb:PutItem
+                    - dynamodb:GetItem
+                    - dynamodb:Scan
+                    - dynamodb:Query
+                    - dynamodb:DeleteItem
+                    - dynamodb:UpdateItem
+                    - dynamodb:BatchGetItem
+                    - dynamodb:BatchWriteItem
+                  Resource:
+                    'Fn::GetAtt': [ BCDynamoDBTable, Arn ]
+
+    # BCApiGatewayAuthorizer:
+    #   Type: AWS::ApiGateway::Authorizer
+    #   Properties:
+    #     Name: ${self:service}-${self:provider.stage}-apig-authzr
+    #     RestApiId:
+    #       Ref: ApiGatewayRestApi
+    #     Type: COGNITO_USER_POOLS
+    #     ProviderARNs:
+    #       - Fn::GetAtt: [ BCCognitoUserPool, Arn ]
+    #     IdentitySource: method.request.header.Authorization
+
+  Outputs:
+    BCCognitoUserPoolId:
+      Description: "Brittany and Caleb Wedding Invitation Web App Cognito User Pool ID"
+      Value:
+        Ref: "BCCognitoUserPool"
+
+    BCCognitoUserPoolClientId:
+      Description: "Brittany and Caleb Wedding Invitation Web App Cognito User Pool Client ID"
+      Value:
+        Ref: "BCCognitoUserPoolClient"
+
+    BCDynamoDbARN:
+      Description: "Brittany and Caleb Wedding Invitation Web App DynamoDB ARN"
+      Value:
+        "Fn::GetAtt": [ BCDynamoDBTable, Arn ]
+
+    BCUserPoolClientHostedUIDomainName:
+      Description: "The Cognito Hosted UI Domain Name"
+      Value: ${self:custom.user_pool_client_hosted_ui_domain}
