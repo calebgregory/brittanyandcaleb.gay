@@ -1,0 +1,26 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+black = "~=21.5b1"
+flake8 = "~=3.7.9"
+isort = "~=5.8.0"
+pytest = "~=4.6"
+pylint = "~=2.6"
+mypy = "~=0.770"
+purify = "~=0.2.2"
+termcolor = "~=1.1.0"
+requests = "~=2.25"
+boto3 = "~=1.9"
+types-termcolor = "~=1.1.0"
+pyjson5 = "==1.6.0"
+
+[packages]
+
+[requires]
+python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true

@@ -1,0 +1,24 @@
+[BASIC]
+max-line-length=120
+good-names=logger,_,i,j,k,__logger
+fail-under: 8.75
+
+# Regular expression matching correct method names. Overrides method-naming style
+method-rgx=(([a-z_][a-z0-9_]{2,})|(_[a-z0-9_]*)|(__[a-z][a-z0-9_]+__))$
+
+[MESSAGES CONTROL]
+disable=
+	invalid-name,
+	too-few-public-methods,
+	too-many-function-args,
+	missing-function-docstring,
+	C0330,  # wrong hanging indentation (pylint gets PEP8 wrong)
+	missing-class-docstring,
+	C0114,  # disable module docstring requirement
+	R0801,  # duplicate code
+	R1735  # prefer {} to dict()
+
+
+[TYPECHECK]
+# this may need to extend to cover all @Cats annotated classes
+generated-members=unstruc,struc,try_struc
