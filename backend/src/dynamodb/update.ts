@@ -87,14 +87,14 @@ export const _build_update_expression = (
   }
 
   if (remove_attrs.size) {
-    const delete_expression_parts: string[] = []
+    const remove_expression_parts: string[] = []
 
     for (const key of remove_attrs) {
       ExpressionAttributeNames[`#${key}`] = key
-      delete_expression_parts.push(`#${key}`)
+      remove_expression_parts.push(`#${key}`)
     }
 
-    update_expression_parts.push(`REMOVE ${delete_expression_parts.join(', ')}`)
+    update_expression_parts.push(`REMOVE ${remove_expression_parts.join(', ')}`)
   }
 
   return {
@@ -108,6 +108,9 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 type TransactableItem = { item_version: number; last_written_at: string }
 
+/** this is a simplified port of
+  https://github.com/xoeye/xoto3/blob/develop/xoto3/dynamodb/update/versioned.py\#L77,
+  primarily written by @petergaultney who deserves most of the credit here. */
 export const dyn_transact_versioned_update_item = async <T extends TransactableItem>(
   table_name: string,
   item_key: AWS.DynamoDB.DocumentClient.Key,
