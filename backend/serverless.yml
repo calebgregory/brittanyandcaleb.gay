@@ -53,6 +53,36 @@ appSync:
             timeout: 6
       request: mapping-templates/generic-request.vtl
       response: mapping-templates/response-throw-runtime-error.vtl
+    updateParticipant:
+      type: Mutation
+      field: updateParticipant
+      kind: UNIT
+      dataSource:
+        type: AWS_LAMBDA
+        description: Update Participant Lambda Function
+        config:
+          serviceRoleArn: { "Fn::GetAtt": [AppSyncToLambdaServiceRole, Arn] }
+          function:
+            handler: build/appsync/internal.AS_LAM_updateParticipant
+            memorySize: 1024
+            timeout: 6
+      request: mapping-templates/generic-request.vtl
+      response: mapping-templates/response-throw-runtime-error.vtl
+    getParticipant:
+      type: Query
+      field: getParticipant
+      kind: UNIT
+      dataSource:
+        type: AWS_LAMBDA
+        description: Get Participant Lambda Function
+        config:
+          serviceRoleArn: { "Fn::GetAtt": [AppSyncToLambdaServiceRole, Arn] }
+          function:
+            handler: build/appsync/internal.AS_LAM_getParticipant
+            memorySize: 1024
+            timeout: 6
+      request: mapping-templates/generic-request.vtl
+      response: mapping-templates/response-throw-runtime-error.vtl
 
 # you can add CloudFormation resource templates here
 resources:

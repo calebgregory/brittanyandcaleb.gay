@@ -1,4 +1,4 @@
-import { IdentityClaims } from '../authn/types'
+import { IdentityClaims } from '../authn'
 import { ForbiddenError } from '../authz'
 
 import { Participant } from './types'

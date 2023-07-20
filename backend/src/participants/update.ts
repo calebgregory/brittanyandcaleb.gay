@@ -6,7 +6,7 @@ import {
 } from 'brittanyandcaleb.gay.graphql-api/types'
 import is_nil from 'lodash.isnil'
 
-import { IdentityClaims } from '../authn/types'
+import { IdentityClaims } from '../authn'
 import { config } from '../config'
 import { dyn_transact_versioned_update_item } from '../dynamodb/update'
 

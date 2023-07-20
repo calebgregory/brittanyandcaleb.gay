@@ -4,7 +4,7 @@ import {
   CreateParticipantResult,
 } from 'brittanyandcaleb.gay.graphql-api/types'
 
-import { IdentityClaims } from '../authn/types'
+import { IdentityClaims } from '../authn'
 import { config } from '../config'
 import { dyn_client } from '../dynamodb/client'
 
@@ -22,7 +22,7 @@ const _authz_participant_from_input = (
 ): Participant => {
   return raise_if_not_authorized(identity, {
     ...participant_key(input.email),
-    email: input.email,
+    email: input.email, // this will be the identity's email for the foreseeable future
     given_name: identity.given_name,
     family_name: identity.family_name,
     attending: input.attending || false,
