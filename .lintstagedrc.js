@@ -9,13 +9,12 @@
  *   https://github.com/okonet/lint-staged
  */
 module.exports = {
-  'src/**/*.ts?(x)': (filenames) => [
+  '**/src/**/*.ts?(x)': (filenames) => [
     `prettier --write ${convertToCmdArgs(filenames)}`,
     /**
      * eslint: Fix all warnings / errors but only display errors
      */
     `eslint ${convertToCmdArgs(filenames)} --quiet --fix`,
-    `git add ${convertToCmdArgs(filenames)}`,
   ],
   '*.json': (filenames) => `prettier --write ${convertToCmdArgs(filenames)}`,
   '*.css': (filenames) => `prettier --write ${convertToCmdArgs(filenames)}`,
