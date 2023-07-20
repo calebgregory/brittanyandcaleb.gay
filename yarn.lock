@@ -4726,7 +4726,28 @@
   dependencies:
     "@types/node" "*"
 
-"@types/lodash@^4.14.123":
+"@types/lodash.clonedeep@^4.5.7":
+  version "4.5.7"
+  resolved "https://registry.yarnpkg.com/@types/lodash.clonedeep/-/lodash.clonedeep-4.5.7.tgz#0e119f582ed6f9e6b373c04a644651763214f197"
+  integrity sha512-ccNqkPptFIXrpVqUECi60/DFxjNKsfoQxSQsgcBJCX/fuX1wgyQieojkcWH/KpE3xzLoWN/2k+ZeGqIN3paSvw==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash.isequal@^4.5.6":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@types/lodash.isequal/-/lodash.isequal-4.5.6.tgz#ff42a1b8e20caa59a97e446a77dc57db923bc02b"
+  integrity sha512-Ww4UGSe3DmtvLLJm2F16hDwEQSv7U0Rr8SujLUA2wHI2D2dm8kPu6Et+/y303LfjTIwSBKXB/YTUcAKpem/XEg==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash.isnil@^4.0.7":
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/@types/lodash.isnil/-/lodash.isnil-4.0.7.tgz#611979491d2ff3ab38db67eaf0c55aefc21cdff6"
+  integrity sha512-jMMa3G3nJCk+agAWJmrmpr4dYurU6F5SdhQuouhFxKE3mdmqI0lLAI6G72NBW+sxfLVnxZymjqj5nRwonqASZw==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*", "@types/lodash@^4.14.123":
   version "4.14.195"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.195.tgz#bafc975b252eb6cea78882ce8a7b6bf22a6de632"
   integrity sha512-Hwx9EUgdwf2GLarOjQp5ZH8ZmblzcbTBC2wtQWNKARBSxM9ezRIAUpeDTgoQRAFB0+8CNWXVA9+MaSOzOF3nPg==
@@ -10971,6 +10992,11 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+lodash.clonedeep@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
+  integrity sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -10995,6 +11021,16 @@ lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
   integrity sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==
+
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
+
+lodash.isnil@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/lodash.isnil/-/lodash.isnil-4.0.0.tgz#49e28cd559013458c814c5479d3c663a21bfaa6c"
+  integrity sha512-up2Mzq3545mwVnMhTDMdfoG1OurpA/s5t88JmQX809eH3C8491iu2sfKhTfhQtKY78oPNhiaHJUpT/dUDAAtng==
 
 lodash.isplainobject@^4.0.6:
   version "4.0.6"
@@ -13712,13 +13748,6 @@ serverless-appsync-plugin@^2.3.1:
     luxon "^2.5.0"
     open "^8.4.0"
     terminal-link "^2.1.1"
-
-serverless-plugin-monorepo@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/serverless-plugin-monorepo/-/serverless-plugin-monorepo-0.11.0.tgz#10462ee64b73a9b708d88e72b1e9710baee8ea35"
-  integrity sha512-9pP45L71+MUfzCcw0/sMo27XB41H3axy6FRL8ewBX1alRKDEzx19jBl+Ut8KTG8siMOxONvGXjc41srQG7cP3g==
-  dependencies:
-    fs-extra "^9.0.1"
 
 serverless@^3.33.0:
   version "3.33.0"
