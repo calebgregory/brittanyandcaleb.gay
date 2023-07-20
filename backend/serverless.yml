@@ -6,14 +6,12 @@ provider:
   runtime: nodejs16.x
   stage: ${opt:stage, 'devl'}
   iam:
-    role:
-      "Fn::GetAtt": [ AppSyncLambdaRole, Arn ]
+    role: { 'Fn::GetAtt': [AppSyncLambdaRole, Arn] }
   environment:
     # https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-retrieve
     STACK_NAME: ${self:service}
     STAGE: ${self:provider.stage}
-    BC_APP_TABLE_NAME:
-      Ref: BCDynamoDBTable
+    BC_APP_TABLE_NAME: { Ref: BCDynamoDBTable }
 
 plugins:
   - serverless-appsync-plugin
@@ -29,13 +27,11 @@ appSync:
   authentication:
     type: 'AMAZON_COGNITO_USER_POOLS'
     config:
-      userPoolId:
-        Ref: "BCCognitoUserPool"
+      userPoolId: { Ref: 'BCCognitoUserPool' }
       awsRegion: ${self:provider.region}
       defaultAction: ALLOW
   logging:
-    roleArn:
-      "Fn::GetAtt": [ AppSyncLogRole, Arn ]
+    roleArn: { 'Fn::GetAtt': [AppSyncLogRole, Arn] }
     level: ALL
   resolvers:
     createParticipant:
@@ -46,7 +42,7 @@ appSync:
         type: AWS_LAMBDA
         description: Create Participant Lambda Function
         config:
-          serviceRoleArn: { "Fn::GetAtt": [AppSyncToLambdaServiceRole, Arn] }
+          serviceRoleArn: { 'Fn::GetAtt': [AppSyncToLambdaServiceRole, Arn] }
           function:
             handler: build/appsync/internal.AS_LAM_createParticipant
             memorySize: 1024
@@ -61,7 +57,7 @@ appSync:
         type: AWS_LAMBDA
         description: Update Participant Lambda Function
         config:
-          serviceRoleArn: { "Fn::GetAtt": [AppSyncToLambdaServiceRole, Arn] }
+          serviceRoleArn: { 'Fn::GetAtt': [AppSyncToLambdaServiceRole, Arn] }
           function:
             handler: build/appsync/internal.AS_LAM_updateParticipant
             memorySize: 1024
@@ -76,7 +72,7 @@ appSync:
         type: AWS_LAMBDA
         description: Get Participant Lambda Function
         config:
-          serviceRoleArn: { "Fn::GetAtt": [AppSyncToLambdaServiceRole, Arn] }
+          serviceRoleArn: { 'Fn::GetAtt': [AppSyncToLambdaServiceRole, Arn] }
           function:
             handler: build/appsync/internal.AS_LAM_getParticipant
             memorySize: 1024
@@ -134,8 +130,7 @@ resources:
     BCUserPoolClientHostedUIDomain:
       Type: AWS::Cognito::UserPoolDomain
       Properties:
-        UserPoolId:
-          Ref: BCCognitoUserPool
+        UserPoolId: { Ref: BCCognitoUserPool }
         Domain: ${self:custom.user_pool_client_hosted_ui_domain}
 
     BCCognitoUserPoolIdentityProviderGoogle:
@@ -147,25 +142,24 @@ resources:
           client_id: ${env:GOOGLE_CLIENT_ID}
           client_secret: ${env:GOOGLE_CLIENT_SECRET}
           authorize_scopes: email profile openid
-        AttributeMapping: {
-          "email_verified": "email_verified",
-          "phone_number": "phoneNumbers",
-          "given_name": "given_name",
-          "family_name": "family_name",
-          "name": "name",
-          "email": "email",
-          "username": "sub"
-        }
-        UserPoolId:
-          Ref: BCCognitoUserPool
+        AttributeMapping:
+          {
+            'email_verified': 'email_verified',
+            'phone_number': 'phoneNumbers',
+            'given_name': 'given_name',
+            'family_name': 'family_name',
+            'name': 'name',
+            'email': 'email',
+            'username': 'sub',
+          }
+        UserPoolId: { Ref: BCCognitoUserPool }
 
     BCCognitoUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:
         ClientName: ${self:service}-user-pool-client-web-${self:provider.stage}
         GenerateSecret: false
-        UserPoolId:
-          Ref: "BCCognitoUserPool"
+        UserPoolId: { Ref: BCCognitoUserPool }
         RefreshTokenValidity: 30
         SupportedIdentityProviders:
           # - COGNITO
@@ -210,9 +204,9 @@ resources:
             - Effect: Allow
               Principal:
                 Service:
-                  - "appsync.amazonaws.com"
+                  - 'appsync.amazonaws.com'
               Action: sts:AssumeRole
-        Path: "/service-role/"
+        Path: '/service-role/'
         Policies:
           - PolicyName: AppsyncLogPolicy
             PolicyDocument:
@@ -227,26 +221,26 @@ resources:
                     - 'arn:aws:logs:*:*:*'
 
     AppSyncToLambdaServiceRole:
-      Type: "AWS::IAM::Role"
+      Type: 'AWS::IAM::Role'
       Properties:
         RoleName: ${self:service}-appsync-to-lambda-service-role
         AssumeRolePolicyDocument:
-          Version: "2012-10-17"
+          Version: '2012-10-17'
           Statement:
-            - Effect: "Allow"
+            - Effect: 'Allow'
               Principal:
                 Service:
-                  - "appsync.amazonaws.com"
+                  - 'appsync.amazonaws.com'
               Action:
-                - "sts:AssumeRole"
+                - 'sts:AssumeRole'
         Policies:
           - PolicyName: ${self:service}-appsync-to-lambda-service-role-policy
             PolicyDocument:
-              Version: "2012-10-17"
+              Version: '2012-10-17'
               Statement:
-                - Effect: "Allow"
+                - Effect: 'Allow'
                   Action:
-                    - "lambda:invokeFunction"
+                    - 'lambda:invokeFunction'
                   Resource:
                     - arn:aws:lambda:${self:provider.region}:*:function:${self:service}-${self:provider.stage}-*
 
@@ -274,12 +268,11 @@ resources:
                     - logs:PutLogEvents
                   Resource:
                     - 'Fn::Join':
-                      - ':'
-                      -
-                        - 'arn:aws:logs'
-                        - Ref: 'AWS::Region'
-                        - Ref: 'AWS::AccountId'
-                        - 'log-group:/aws/lambda/*:*:*'
+                        - ':'
+                        - - 'arn:aws:logs'
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - 'log-group:/aws/lambda/*:*:*'
           - PolicyName: ${self:service}-${self:provider.stage}-policy-DynamoDBWriteAccess
             PolicyDocument:
               Version: '2012-10-17'
@@ -295,25 +288,21 @@ resources:
                     - dynamodb:UpdateItem
                     - dynamodb:BatchGetItem
                     - dynamodb:BatchWriteItem
-                  Resource:
-                    'Fn::GetAtt': [ BCDynamoDBTable, Arn ]
+                  Resource: { 'Fn::GetAtt': [BCDynamoDBTable, Arn] }
 
   Outputs:
     BCCognitoUserPoolId:
-      Description: "Brittany and Caleb Wedding Invitation Web App Cognito User Pool ID"
-      Value:
-        Ref: "BCCognitoUserPool"
+      Description: 'Brittany and Caleb Wedding Invitation Web App Cognito User Pool ID'
+      Value: { Ref: BCCognitoUserPool }
 
     BCCognitoUserPoolClientId:
-      Description: "Brittany and Caleb Wedding Invitation Web App Cognito User Pool Client ID"
-      Value:
-        Ref: "BCCognitoUserPoolClient"
+      Description: 'Brittany and Caleb Wedding Invitation Web App Cognito User Pool Client ID'
+      Value: { Ref: BCCognitoUserPoolClient }
 
     BCDynamoDbARN:
-      Description: "Brittany and Caleb Wedding Invitation Web App DynamoDB ARN"
-      Value:
-        "Fn::GetAtt": [ BCDynamoDBTable, Arn ]
+      Description: 'Brittany and Caleb Wedding Invitation Web App DynamoDB ARN'
+      Value: { 'Fn::GetAtt': [BCDynamoDBTable, Arn] }
 
     BCUserPoolClientHostedUIDomainName:
-      Description: "The Cognito Hosted UI Domain Name"
+      Description: 'The Cognito Hosted UI Domain Name'
       Value: ${self:custom.user_pool_client_hosted_ui_domain}

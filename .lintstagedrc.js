@@ -19,6 +19,7 @@ module.exports = {
   '*.json': (filenames) => `prettier --write ${convertToCmdArgs(filenames)}`,
   '*.css': (filenames) => `prettier --write ${convertToCmdArgs(filenames)}`,
   '*.md': (filenames) => `prettier --write ${convertToCmdArgs(filenames)}`,
+  '*.yml': (filenames) => `prettier --write ${convertToCmdArgs(filenames)}`,
 }
 
 /**
