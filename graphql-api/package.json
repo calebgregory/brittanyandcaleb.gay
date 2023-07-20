@@ -1,0 +1,20 @@
+{
+  "name": "brittanyandcaleb.gay.graphql-api",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "include": [
+    "schema",
+    "types.ts",
+    "test-builders.ts"
+  ],
+  "author": "Caleb Gregory",
+  "license": "MIT",
+  "scripts": {
+    "gen": "graphql-codegen"
+  },
+  "dependencies": {
+    "@graphql-codegen/cli": "^4.0.1",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "graphql-codegen-typescript-mock-data": "^3.5.0"
+  }
+}

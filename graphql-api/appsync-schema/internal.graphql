@@ -1,0 +1,56 @@
+type Query {
+  getParticipant(input: GetParticipantInput!): GetParticipantResult!
+}
+
+type Mutation {
+  createParticipant(input: CreateParticipantInput!): CreateParticipantResult!
+  updateParticipant(input: UpdateParticipantInput!): UpdateParticipantResult!
+}
+
+# Model
+
+type Participant {
+  email: ID!
+  attending: Boolean!
+  guests: [ParticipantGuest!]
+  created_at: AWSDateTime!
+  updated_at: AWSDateTime!
+}
+
+type ParticipantGuest {
+  name: String!
+}
+
+# API
+
+input GetParticipantInput {
+  email: ID!
+}
+
+type GetParticipantResult {
+  participant: Participant!
+}
+
+input ParticipantGuestInput {
+  name: String!
+}
+
+input CreateParticipantInput {
+  email: ID!
+  attending: Boolean
+  guests: [ParticipantGuestInput!]
+}
+
+type CreateParticipantResult {
+  participant: Participant!
+}
+
+input UpdateParticipantInput {
+  email: ID!
+  attending: Boolean
+  guests: [ParticipantGuestInput!]
+}
+
+type UpdateParticipantResult {
+  participant: Participant!
+}

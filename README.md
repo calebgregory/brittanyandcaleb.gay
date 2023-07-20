@@ -4,12 +4,14 @@
 
 **Examples to follow**:
 
+- <https://dynobase.dev/dynamodb-nodejs>
 - <https://github.com/andreivmaksimov/serverless-framework-aws-lambda-amazon-api-gateway-s3-dynamodb-and-cognito>
 - <https://github.com/bsdkurt/aws-node-custom-user-pool>
 
 **Documentation**:
 
 - <https://www.serverless.com/framework/docs/providers/aws/events/cognito-user-pool>
+- <https://github.com/sid88in/serverless-appsync-plugin/blob/master/doc/dataSources.md>
 
 **Client app**:
 
@@ -35,3 +37,4 @@
 1. Example configuration for a Federated Identity Provider <https://gist.github.com/singledigit/2c4d7232fa96d9e98a3de89cf6ebe7a5>
 2. Good to know this very magical API exists <https://docs.amplify.aws/lib/auth/social/q/platform/js/#configure-auth-category>
 3. <https://blog.logrocket.com/guide-adding-google-login-react-app/>
+4. <https://aws.amazon.com/blogs/security/use-amazon-cognito-to-add-claims-to-an-identity-token-for-fine-grained-authorization/>

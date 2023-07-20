@@ -4,7 +4,7 @@
     "strict": true,
     "preserveConstEnums": true,
     "outDir": "./build",
-    "sourceMap": false,
+    "sourceMap": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,

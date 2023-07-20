@@ -8,7 +8,8 @@
   "private": true,
   "workspaces": [
     "backend",
-    "client"
+    "client",
+    "graphql-api"
   ],
   "scripts": {
     "prepare": "husky install"
