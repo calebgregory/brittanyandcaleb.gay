@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import subprocess
+from pprint import pprint
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,12 +27,14 @@ def _find_stack_output(stack: dict, output_key: str):
 
 
 def _collect_bc_gay_secrets(stack):
+    pprint(stack)
     return dict(
         user_pool_id=_find_stack_output(stack, "BCCognitoUserPoolId"),
         user_pool_client_id=_find_stack_output(stack, "BCCognitoUserPoolClientId"),
         user_pool_client_hosted_ui_domain=_find_stack_output(
             stack, "BCUserPoolClientHostedUIDomainName"
         ),
+        internal_gql_api_url=_find_stack_output(stack, "GraphQlApiUrl"),
     )
 
 

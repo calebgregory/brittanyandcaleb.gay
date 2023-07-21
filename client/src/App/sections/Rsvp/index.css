@@ -1,0 +1,10 @@
+.rsvp_form_label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+ul.rsvp_form_guests > li {
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+}

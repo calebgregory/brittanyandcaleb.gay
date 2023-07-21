@@ -1,8 +1,10 @@
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import type { CognitoUser } from 'amazon-cognito-identity-js'
 import { Auth } from 'aws-amplify'
+import { Client } from 'urql'
 
 import { config } from './config'
+import { build_gql_client } from './api'
 
 /** thank you https://github.com/aws-amplify/amplify-js/issues/8632 */
 const cache_amplify_user_session_using_fetched_tokens = async (
@@ -78,7 +80,9 @@ const refresh_user_session = async (user: CognitoUser): Promise<CognitoUser> => 
   })
 }
 
-export async function init(): Promise<CognitoUser | null> {
+type App = { user: CognitoUser; gql_client: Client }
+
+export async function init(): Promise<App | null> {
   Auth.configure({
     region: 'us-east-1',
     userPoolId: config.user_pool_id,
@@ -91,12 +95,24 @@ export async function init(): Promise<CognitoUser | null> {
   let user: CognitoUser | null = null
   try {
     user = await Auth.currentAuthenticatedUser()
-    if (user) {
-      console.log('got cached user', { user })
-      return await refresh_user_session(user)
-    }
   } catch (error) {
     console.log('caught error getting current authenticated user', { error })
+  }
+
+  if (user) {
+    console.log('got cached user', { user })
+    try {
+      user = await refresh_user_session(user)
+      return {
+        user,
+        gql_client: build_gql_client(() =>
+          user!.getSignInUserSession()!.getIdToken().getJwtToken()
+        ),
+      }
+    } catch (error) {
+      console.error('error refreshing user session', { error })
+      user = null
+    }
   }
 
   if (auth_code) {
@@ -116,5 +132,10 @@ export async function init(): Promise<CognitoUser | null> {
     window.location.search = params.toString()
   }
 
-  return user
+  return (
+    user && {
+      user,
+      gql_client: build_gql_client(() => user!.getSignInUserSession()!.getIdToken().getJwtToken()),
+    }
+  )
 }

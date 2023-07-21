@@ -12,7 +12,8 @@ cat <<EOM > src/config/__generated__.json
   "google_client_id": "$(get_from_secret_file 'google_app.json' '.web.client_id')",
   "user_pool_id": "$(get_from_secret_file 'bc_gay_app.json' '.user_pool_id')",
   "user_pool_client_id": "$(get_from_secret_file 'bc_gay_app.json' '.user_pool_client_id')",
-  "user_pool_client_hosted_ui_domain": "$(get_from_secret_file 'bc_gay_app.json' '.user_pool_client_hosted_ui_domain')"
+  "user_pool_client_hosted_ui_domain": "$(get_from_secret_file 'bc_gay_app.json' '.user_pool_client_hosted_ui_domain')",
+  "internal_graphql_api_url": "$(get_from_secret_file 'bc_gay_app.json' '.internal_gql_api_url')"
 }
 EOM
 
