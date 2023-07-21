@@ -9,6 +9,7 @@ import {
   ParticipantGuest,
 } from 'brittanyandcaleb.gay.graphql-api/types'
 
+import { useUser } from '@app/hooks/useUser'
 import './index.css'
 
 const CreateParticipant = gql`
@@ -40,13 +41,13 @@ const UpdateParticipant = gql`
 `
 
 type Props = {
-  userEmail: string
   initialValues: Participant | null
   goBack: () => unknown
   onSubmit: () => unknown
 }
 
-export function RsvpForm({ userEmail, initialValues, goBack, onSubmit }: Props) {
+export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
+  const { payload } = useUser().getSignInUserSession()!.getIdToken()
   const [create_mutation_result, create_participant] = useMutation<
     Pick<Mutation, 'createParticipant'>,
     MutationCreateParticipantArgs
@@ -58,6 +59,13 @@ export function RsvpForm({ userEmail, initialValues, goBack, onSubmit }: Props) 
 
   const is_executing_mutation = create_mutation_result.fetching || update_mutation_result.fetching
   const mutation_error = create_mutation_result.error || update_mutation_result.error
+
+  const [given_name, set_given_name] = useState<string>(
+    initialValues?.given_name || payload.given_name || ''
+  )
+  const [family_name, set_family_name] = useState<string>(
+    initialValues?.family_name || payload.family_name || ''
+  )
 
   const [attending, set_attending] = useState<boolean>(initialValues?.attending || false)
 
@@ -88,7 +96,7 @@ export function RsvpForm({ userEmail, initialValues, goBack, onSubmit }: Props) 
     const mutation = initialValues ? update_participant : create_participant
     const vars = {
       input: {
-        email: userEmail,
+        email: payload.email,
         attending,
         guests,
       },
@@ -124,6 +132,31 @@ export function RsvpForm({ userEmail, initialValues, goBack, onSubmit }: Props) 
             onChange={() => set_attending(false)}
           />
         </B.Form.Group>
+        <div className="rsvp_form_label">Aaand, what's your name?</div>
+        <B.InputGroup className="mb-3">
+          <B.FloatingLabel controlId="given_name" label="First">
+            <B.Form.Control
+              type="text"
+              placeholder="First"
+              value={given_name}
+              onChange={(event) => {
+                set_given_name(event.target.value)
+              }}
+              aria-label="First name"
+            />
+          </B.FloatingLabel>
+          <B.FloatingLabel controlId="family_name" label="Last">
+            <B.Form.Control
+              type="text"
+              placeholder="Last"
+              value={family_name}
+              onChange={(event) => {
+                set_family_name(event.target.value)
+              }}
+              aria-label="Last name"
+            />
+          </B.FloatingLabel>
+        </B.InputGroup>
         <div className="rsvp_form_label">
           Who, if anyone, do you plan on bringing?{' '}
           <span style={{ fontSize: '0.7rem' }}>(Tap to edit)</span>

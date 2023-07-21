@@ -23,8 +23,8 @@ const _authz_participant_from_input = (
   return raise_if_not_authorized(identity, {
     ...participant_key(input.email),
     email: input.email, // this will be the identity's email for the foreseeable future
-    given_name: identity.given_name,
-    family_name: identity.family_name,
+    given_name: input.given_name,
+    family_name: input.family_name,
     attending: input.attending || false,
     guests: raise_if_too_many_guests(
       (input.guests || []).map(({ name }) => ({ name, added_at: now }))

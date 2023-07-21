@@ -55,7 +55,6 @@ export const Rsvp = () => {
     return (
       <div id={ids.rsvp_form}>
         <RsvpForm
-          userEmail={payload.email}
           initialValues={p}
           onSubmit={() => set_is_editing(false)}
           goBack={() => set_is_editing(false)}

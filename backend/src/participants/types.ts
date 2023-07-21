@@ -14,8 +14,8 @@ export type Participant = ParticipantKey & {
   email: string
 
   // these may come in on claims, but they may not
-  given_name?: string
-  family_name?: string
+  given_name: string
+  family_name: string
 
   attending: boolean
   guests: ParticipantGuest[]

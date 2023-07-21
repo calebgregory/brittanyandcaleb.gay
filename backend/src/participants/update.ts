@@ -57,12 +57,16 @@ const _authz_update_participant = (
 ): Participant => {
   raise_if_not_authorized(identity, participant)
 
-  if (!is_nil(input.attending)) {
-    participant.attending = input.attending
-  }
-
-  if (!is_nil(input.guests)) {
-    participant.guests = _updated_guests(input.guests, participant.guests, now)
+  participant = {
+    ...participant,
+    family_name: is_nil(input.family_name) ? participant.family_name : input.family_name,
+    given_name: is_nil(input.given_name) ? participant.given_name : input.given_name,
+    attending: is_nil(input.attending) ? participant.attending : input.attending,
+    guests: is_nil(input.guests)
+      ? participant.guests
+      : _updated_guests(input.guests, participant.guests, now),
+    updated_at: now,
+    updated_by: identity.email,
   }
 
   raise_if_not_authorized(identity, participant)

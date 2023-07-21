@@ -11,6 +11,8 @@ type Mutation {
 
 type Participant {
   email: ID!
+  given_name: String!
+  family_name: String!
   attending: Boolean!
   guests: [ParticipantGuest!]
   created_at: AWSDateTime!
@@ -37,6 +39,8 @@ input ParticipantGuestInput {
 
 input CreateParticipantInput {
   email: ID!
+  given_name: String!
+  family_name: String!
   attending: Boolean
   guests: [ParticipantGuestInput!]
 }
@@ -47,6 +51,8 @@ type CreateParticipantResult {
 
 input UpdateParticipantInput {
   email: ID!
+  given_name: String
+  family_name: String
   attending: Boolean
   guests: [ParticipantGuestInput!]
 }
