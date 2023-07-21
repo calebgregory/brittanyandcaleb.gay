@@ -38,3 +38,17 @@
 2. Good to know this very magical API exists <https://docs.amplify.aws/lib/auth/social/q/platform/js/#configure-auth-category>
 3. <https://blog.logrocket.com/guide-adding-google-login-react-app/>
 4. <https://aws.amazon.com/blogs/security/use-amazon-cognito-to-add-claims-to-an-identity-token-for-fine-grained-authorization/>
+
+## TODO
+
+1. client
+   1. display mutation execution errors in RSVP form
+   1. <https://github.com/tsparticles/react/#readme> + prevent duplicate mutation executions
+   1. console love letter
+   1. use debug instead of console
+   1. add hotel information
+   1. add venue information
+   1. add airport information
+   1. style login screen with picture of us
+1. google app
+   1. create prod app, deploy prod, and apply for review from google (this could take up to weeks, so...)
