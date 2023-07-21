@@ -46,7 +46,7 @@ export const _derive_item_diff = <T extends Record<string, any>>(
   }
 
   for (const [key, old_value] of Object.entries(old_item)) {
-    if (old_value && !new_item[key]) {
+    if (!is_nil(old_value) && is_nil(new_item[key])) {
       remove_attrs.add(key)
     }
   }
@@ -147,6 +147,8 @@ export const dyn_transact_versioned_update_item = async <T extends TransactableI
       .set('last_written_at', next_last_written_at)
 
     const update_expression = _build_update_expression(curr_item_version, diff)
+
+    logger.info('Attempting update', { item_key, update_expression })
 
     try {
       const resp = await dyn_client()
