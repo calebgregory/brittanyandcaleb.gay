@@ -195,11 +195,24 @@ export function RsvpForm({ userEmail, initialValues, goBack, onSubmit }: Props) 
         </B.Form.Group>
       </div>
       <div className="d-grid gap-2">
-        <B.Button variant="primary" type="submit" size="lg" onClick={submit}>
+        <B.Button
+          variant="primary"
+          type="submit"
+          size="lg"
+          onClick={submit}
+          disabled={is_executing_mutation}
+        >
           Submit! 🕊
         </B.Button>
       </div>
-      {/* todo: display error */}
+      {mutation_error && (
+        <B.Alert variant="danger" style={{ marginTop: '10px' }} dismissible>
+          <B.Alert.Heading>Oops! There was an error submitting.</B.Alert.Heading>
+          <p>Here's what we got back from the server:</p>
+          <pre>{JSON.stringify(mutation_error, null, 2)}</pre>
+          <p>Take a screenshot of this and text it to Caleb.</p>
+        </B.Alert>
+      )}
     </B.Form>
   )
 }
