@@ -8,11 +8,17 @@ import { useUser } from '@app/hooks/useUser'
 import { RsvpForm } from './RsvpForm'
 import { RsvpInfo } from './RsvpInfo'
 
+import { logger } from '@app/log'
+
+const log = logger('Rsvp')
+
 const GetParticipant = gql`
   query GetParticipant($input: GetParticipantInput!) {
     getParticipant(input: $input) {
       participant {
         email
+        given_name
+        family_name
         attending
         guests {
           name
@@ -36,7 +42,7 @@ export const Rsvp = () => {
   }
 
   if (query_result.error) {
-    console.log('error fetching participant', {
+    log.error('error fetching participant', {
       error: query_result.error,
       id_token_claims: payload,
     })
@@ -56,7 +62,9 @@ export const Rsvp = () => {
       <div id={ids.rsvp_form}>
         <RsvpForm
           initialValues={p}
-          onSubmit={() => set_is_editing(false)}
+          onSubmit={() => {
+            /* no-op in favor of confetti cannon */
+          }}
           goBack={() => set_is_editing(false)}
         />
       </div>

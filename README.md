@@ -43,15 +43,18 @@
 
 1. client
    1. ~display mutation execution errors in RSVP form~
-   1. <https://github.com/tsparticles/react/#readme> + ~prevent duplicate mutation executions~
+      -. ~prevent duplicate mutation executions~
    1. ~option to input name, prefilled with identity claims~
-   1. console love letter
-   1. use debug instead of console
+   1. ~use debug instead of console~
+   1. ~let people remove guests~
+   1. ~<https://github.com/tsparticles/react/#readme>~
+      1. ~make even more refined; cycle through presets (thank you <https://confetti.js.org/more.html>)~
    1. add hotel information
    1. add venue information
    1. add airport information
    1. style login screen with picture of us
    1. make accordion
    1. customize bootstrap color theme <https://colorhunt.co/> <https://getbootstrap.com/docs/5.3/customize/color/>
+   1. console love letter
 1. google app
    1. create prod app, deploy prod, and apply for review from google (this could take up to weeks, so...)

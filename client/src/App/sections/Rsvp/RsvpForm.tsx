@@ -10,13 +10,19 @@ import {
 } from 'brittanyandcaleb.gay.graphql-api/types'
 
 import { useUser } from '@app/hooks/useUser'
+import { logger } from '@app/log'
 import './index.css'
+import { shoot_confetti } from './confetti-cannon'
+
+const log = logger('RsvpForm')
 
 const CreateParticipant = gql`
-  mutation CreateParticipant($input: CrejteParticipantInput!) {
+  mutation CreateParticipant($input: CreateParticipantInput!) {
     createParticipant(input: $input) {
       participant {
         email
+        given_name
+        family_name
         attending
         guests {
           name
@@ -31,6 +37,8 @@ const UpdateParticipant = gql`
     updateParticipant(input: $input) {
       participant {
         email
+        given_name
+        family_name
         attending
         guests {
           name
@@ -82,6 +90,11 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
   const input_ref = useRef<HTMLInputElement>(null)
 
   const add_guest = (name: string) => {
+    name = name.trim()
+    if (!name) {
+      return
+    }
+
     const next_guests = [...guests]
     if (editing_existing_guest.index > -1) {
       next_guests.splice(editing_existing_guest.index, 0, { name })
@@ -89,22 +102,35 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
       next_guests.push({ name })
     }
     set_guests(next_guests)
+
     set_guest_name('')
   }
 
+  const [submitted, set_submitted] = useState(false)
+
   const submit = async () => {
+    shoot_confetti()
+    if (submitted) {
+      // they can always back out and come back in, but in the meantime, let
+      // them shoot confetti to their heart's content
+      return
+    }
+
     const mutation = initialValues ? update_participant : create_participant
     const vars = {
       input: {
         email: payload.email,
+        given_name: given_name.trim(),
+        family_name: family_name.trim(),
         attending,
         guests,
       },
     }
     const resp = await mutation(vars)
-    console.log('mutation result', resp)
+    log.debug('mutation result', resp)
     if (!resp.error) {
       onSubmit()
+      set_submitted(true)
     }
   }
 
@@ -139,6 +165,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
               type="text"
               placeholder="First"
               value={given_name}
+              required
               onChange={(event) => {
                 set_given_name(event.target.value)
               }}
@@ -150,6 +177,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
               type="text"
               placeholder="Last"
               value={family_name}
+              required
               onChange={(event) => {
                 set_family_name(event.target.value)
               }}
@@ -158,23 +186,32 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
           </B.FloatingLabel>
         </B.InputGroup>
         <div className="rsvp_form_label">
-          Who, if anyone, do you plan on bringing?{' '}
-          <span style={{ fontSize: '0.7rem' }}>(Tap to edit)</span>
+          Who do you plan on bringing?{' '}
+          {guests.length ? <span style={{ fontSize: '0.7rem' }}>(Tap name to edit)</span> : null}
         </div>
         <B.Form.Group>
           <ul className="rsvp_form_guests">
             {guests.map((guest, index) => (
               <B.Collapse key={index} in appear>
-                <li
-                  key={index}
-                  onClick={() => {
-                    set_guests(guests.filter((_g, i) => i !== index))
-                    set_editing_existing_guest({ name: guest.name, index })
-                    set_guest_name(guest.name)
-                    input_ref.current?.focus()
-                  }}
-                >
-                  {guest.name}
+                <li key={index}>
+                  <span
+                    onClick={() => {
+                      set_guests(guests.filter((_g, i) => i !== index))
+                      set_editing_existing_guest({ name: guest.name, index })
+                      set_guest_name(guest.name)
+                      input_ref.current?.focus()
+                    }}
+                  >
+                    {guest.name}
+                  </span>{' '}
+                  <span
+                    style={{ padding: '10px', cursor: 'pointer' }}
+                    onClick={() => {
+                      set_guests(guests.filter((_g, i) => i !== index))
+                    }}
+                  >
+                    🅧
+                  </span>
                 </li>
               </B.Collapse>
             ))}

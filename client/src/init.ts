@@ -3,8 +3,13 @@ import type { CognitoUser } from 'amazon-cognito-identity-js'
 import { Auth } from 'aws-amplify'
 import { Client } from 'urql'
 
+import { load_confetti_canon_cdn } from '@app/App/sections/Rsvp/confetti-cannon'
+
 import { config } from './config'
 import { build_gql_client } from './api'
+import * as log from './log'
+
+const logger = log.logger('init')
 
 /** thank you https://github.com/aws-amplify/amplify-js/issues/8632 */
 const cache_amplify_user_session_using_fetched_tokens = async (
@@ -53,7 +58,7 @@ const fetch_tokens_using_auth_code = async (auth_code: string) => {
   })
   const resp_body = await resp.json()
   if (!resp.ok) {
-    console.error('fetch_tokens_using_auth_code', { error: resp_body })
+    logger.error('fetch_tokens_using_auth_code', { error: resp_body })
     return null
   }
   return resp_body
@@ -68,11 +73,11 @@ const refresh_user_session = async (user: CognitoUser): Promise<CognitoUser> => 
   return new Promise((resolve, reject) => {
     user.refreshSession(refresh_token, (error, session) => {
       if (error) {
-        console.error('refresh_id_token', { error })
+        logger.error(error, { ctx: 'refresh_id_token' })
         reject(error)
       }
 
-      console.log('successfully refreshed user session', { session })
+      logger.info('successfully refreshed user session', { session })
       user.setSignInUserSession(session)
 
       resolve(user)
@@ -83,6 +88,10 @@ const refresh_user_session = async (user: CognitoUser): Promise<CognitoUser> => 
 type App = { user: CognitoUser; gql_client: Client }
 
 export async function init(): Promise<App | null> {
+  log.enable(config.log_config)
+
+  load_confetti_canon_cdn()
+
   Auth.configure({
     region: 'us-east-1',
     userPoolId: config.user_pool_id,
@@ -96,11 +105,11 @@ export async function init(): Promise<App | null> {
   try {
     user = await Auth.currentAuthenticatedUser()
   } catch (error) {
-    console.log('caught error getting current authenticated user', { error })
+    logger.warn('caught error getting current authenticated user', { error })
   }
 
   if (user) {
-    console.log('got cached user', { user })
+    logger.info('got cached user', { user })
     try {
       user = await refresh_user_session(user)
       return {
@@ -110,7 +119,7 @@ export async function init(): Promise<App | null> {
         ),
       }
     } catch (error) {
-      console.error('error refreshing user session', { error })
+      logger.error(error, { ctx: 'error refreshing user session' })
       user = null
     }
   }
@@ -124,7 +133,7 @@ export async function init(): Promise<App | null> {
         access_token,
         refresh_token
       )
-      console.log('got tokens using auth_code and cached a user', { user })
+      logger.info('got tokens using auth_code and cached a user', { user })
     }
 
     // reset search, because the ?code= param is now invalid

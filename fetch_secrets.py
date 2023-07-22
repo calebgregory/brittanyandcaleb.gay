@@ -26,9 +26,10 @@ def _find_stack_output(stack: dict, output_key: str):
     return None
 
 
-def _collect_bc_gay_secrets(stack):
+def _collect_bc_gay_secrets(stack, stage):
     pprint(stack)
     return dict(
+        stage=stage,
         user_pool_id=_find_stack_output(stack, "BCCognitoUserPoolId"),
         user_pool_client_id=_find_stack_output(stack, "BCCognitoUserPoolClientId"),
         user_pool_client_hosted_ui_domain=_find_stack_output(
@@ -63,7 +64,7 @@ def main():
         exit(1)
 
     stack_descriptions = json.loads(outs)
-    secrets = _collect_bc_gay_secrets(stack=_find_stack(stack_descriptions, stack_name))
+    secrets = _collect_bc_gay_secrets(stack=_find_stack(stack_descriptions, stack_name), stage)
 
     with open(os.path.join(THIS_DIR, "secrets/bc_gay_app.json"), "w") as f:
         json.dump(secrets, f, indent=2)
