@@ -38,3 +38,10 @@ hotels:
     address: 3004 Bays Meadow Pl, Kingsport, TN 37664
     distances: [9 min to the Social, 7 min to Bays Mtn]
     cost: $73/night
+
+  - name: Warrior's Path State Park
+    url: https://tnstateparks.com/parks/campground/warriors-path
+    address: 490 Hemlock Rd, Kingsport, TN 37663
+    distances: [15 min to The Social, 19 min to Bays Mtn]
+    cost: $5/night
+    comment: If you're looking for something really cheap, camping is always a great option.  Warrior's Path is the most visited state park in Tennessee, and for good reason.  The campground is up on the ridge of a peninsula surrounded by a lake.  Their bathrooms are clean and well-maintained.  Caleb used to run around the campground all the time for cross-country practice.  If you're traveling here in an RV or camper, we recommend you stay here.  Make sure to book ahead of time, though, because October is our "busy season".

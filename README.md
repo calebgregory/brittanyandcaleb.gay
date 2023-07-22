@@ -52,8 +52,8 @@
       1. ~see if it's possible to shoot confetti from (x,y) location of MouseEvent~
    1. ~if someone has entered guest and they hit submit, then add the guest before submitting~
    1. ~add hotel information~
-   1. add venue information
-   1. add airport information
+   1. ~add venue information~
+   1. ~add airport information~
    1. style login screen with picture of us
    1. make accordion
    1. customize bootstrap color theme <https://colorhunt.co/> <https://getbootstrap.com/docs/5.3/customize/color/>

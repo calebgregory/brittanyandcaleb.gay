@@ -12,7 +12,6 @@ module.exports = {
     {
       plugin: {
         overrideWebpackConfig: ({ context, webpackConfig }) => {
-          console.log(webpackConfig.module.rules.find((rule) => rule.hasOwnProperty('oneOf')))
           const { isFound, match: fileLoaderMatch } = getLoader(
             webpackConfig,
             (rule) => rule.type === 'asset/resource'

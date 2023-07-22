@@ -13,3 +13,7 @@ code {
 #app {
   padding: 10px 15px;
 }
+
+#app > .section_container {
+  margin-bottom: 15px;
+}

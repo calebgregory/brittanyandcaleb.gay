@@ -39,29 +39,25 @@ export const Rsvp = () => {
     variables: { input: { email: payload.email } },
   })
 
-  if (query_result.fetching) {
-    return <p id={ids.rsvp_form}>Loading...</p>
-  }
-
   if (query_result.error) {
     log.error('error fetching participant', {
       error: query_result.error,
       id_token_claims: payload,
     })
-
-    return (
-      <p id={ids.rsvp_form}>
-        Weird... there was an error fetching you in our system. Call Caleb and tell him this form
-        isn't working.
-      </p>
-    )
   }
 
   const { participant: p } = query_result.data.getParticipant
-
-  if (is_editing) {
-    return (
-      <div id={ids.rsvp_form}>
+  return (
+    <div className="section_container" id={ids.rsvp_form}>
+      <h2>RSVP</h2>
+      {query_result.fetching ? (
+        <p>Loading...</p>
+      ) : query_result.error ? (
+        <p>
+          Weird... there was an error fetching you in our system. Call Caleb and tell him this form
+          isn't working.
+        </p>
+      ) : is_editing ? (
         <RsvpForm
           initialValues={p}
           onSubmit={() => {
@@ -69,33 +65,25 @@ export const Rsvp = () => {
           }}
           goBack={() => set_is_editing(false)}
         />
-      </div>
-    )
-  }
-
-  if (p) {
-    return (
-      <div id={ids.rsvp_form}>
+      ) : p ? (
         <RsvpInfo participant={p} engageEditMode={() => set_is_editing(true)} />
-      </div>
-    )
-  }
-
-  return (
-    <div id={ids.rsvp_form}>
-      <p>It looks like you haven't RSVP'd yet!</p>
-      <div className="d-grid gap-2">
-        <B.Button
-          variant="primary"
-          size="lg"
-          onClick={(event) => {
-            shoot_hearts(event)
-            set_is_editing(true)
-          }}
-        >
-          RSVP 💕
-        </B.Button>
-      </div>
+      ) : (
+        <>
+          <p>It looks like you haven't RSVP'd yet!</p>
+          <div className="d-grid gap-2">
+            <B.Button
+              variant="primary"
+              size="lg"
+              onClick={(event) => {
+                shoot_hearts(event)
+                set_is_editing(true)
+              }}
+            >
+              RSVP 💕
+            </B.Button>
+          </div>
+        </>
+      )}
     </div>
   )
 }
