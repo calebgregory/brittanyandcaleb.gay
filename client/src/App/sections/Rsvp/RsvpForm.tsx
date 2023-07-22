@@ -1,5 +1,6 @@
 import React, { useRef, useState, MouseEventHandler } from 'react'
 import * as B from 'react-bootstrap'
+import is_equal from 'lodash.isequal'
 import { gql, useMutation } from 'urql'
 import {
   Mutation,
@@ -92,7 +93,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
   const add_guest = (name: string) => {
     name = name.trim()
     if (!name) {
-      return
+      return guests
     }
 
     const next_guests = [...guests]
@@ -104,35 +105,44 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
     set_guests(next_guests)
 
     set_guest_name('')
+    return next_guests
   }
 
-  const [submitted, set_submitted] = useState(false)
+  const last_submitted_values = useRef<
+    MutationCreateParticipantArgs | MutationUpdateParticipantArgs | null
+  >(null)
 
   const submit: MouseEventHandler<HTMLButtonElement> = async (event) => {
     event.preventDefault()
 
-    shoot_confetti()
-    if (submitted) {
-      // they can always back out and come back in, but in the meantime, let
-      // them shoot confetti to their heart's content
-      return
-    }
+    shoot_confetti(event)
 
     const mutation = initialValues ? update_participant : create_participant
+
     const vars = {
       input: {
         email: payload.email,
         given_name: given_name.trim(),
         family_name: family_name.trim(),
         attending,
-        guests,
+        guests: add_guest(guest_name),
+        //      ^ when user submits form, if they have entered a guest name
+        // without having "added" it, we add it for them, thinking that'd
+        // be the least surprising behavior
       },
     }
+
+    if (is_executing_mutation || is_equal(last_submitted_values.current, vars)) {
+      // let them shoot confetti to their heart's content
+      return
+    }
+
+    last_submitted_values.current = vars
     const resp = await mutation(vars)
     log.debug('mutation result', resp)
+
     if (!resp.error) {
       onSubmit()
-      set_submitted(true)
     }
   }
 
@@ -267,13 +277,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
         </B.Form.Group>
       </div>
       <div className="d-grid gap-2">
-        <B.Button
-          variant="primary"
-          type="submit"
-          size="lg"
-          onClick={submit}
-          disabled={is_executing_mutation}
-        >
+        <B.Button variant="primary" type="submit" size="lg" onClick={submit}>
           Submit! 🕊
         </B.Button>
       </div>

@@ -88,9 +88,9 @@ export const Rsvp = () => {
         <B.Button
           variant="primary"
           size="lg"
-          onClick={() => {
+          onClick={(event) => {
+            shoot_hearts(event)
             set_is_editing(true)
-            shoot_hearts()
           }}
         >
           RSVP 💕

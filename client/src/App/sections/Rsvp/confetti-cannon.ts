@@ -1,3 +1,7 @@
+/**
+  https://github.com/matteobruni/tsparticles/tree/main/bundles/confetti
+  TODO: use their package
+*/
 import { logger } from '@app/log'
 
 const log = logger('confetti-cannon')
@@ -29,7 +33,23 @@ function confetti(...args: any[]) {
   return _confetti(...args)
 }
 
-function shoot_stars() {
+type ConfettiEvent = {
+  clientX: number
+  clientY: number
+}
+
+/** the `position` option to confetti requires a 0 <= n <= 100 value
+
+  the result of this calculation is that the confetti pops out from wherever the user clicked */
+function io_get_position_from_event({ clientX, clientY }: ConfettiEvent) {
+  const position = {
+    x: Math.round((clientX / window.innerWidth) * 100),
+    y: Math.round((clientY / window.innerHeight) * 100),
+  }
+  return { position }
+}
+
+function shoot_stars(event: ConfettiEvent) {
   const defaults = {
     spread: 360,
     ticks: 50,
@@ -38,6 +58,7 @@ function shoot_stars() {
     startVelocity: 30,
     shapes: ['star'],
     colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8'],
+    ...io_get_position_from_event(event),
   }
 
   function shoot() {
@@ -61,7 +82,7 @@ function shoot_stars() {
   setTimeout(shoot, 200)
 }
 
-export function shoot_hearts() {
+export function shoot_hearts(event: ConfettiEvent) {
   const defaults = {
     spread: 360,
     ticks: 100,
@@ -70,6 +91,7 @@ export function shoot_hearts() {
     startVelocity: 30,
     shapes: ['heart'],
     colors: ['FFC0CB', 'FF69B4', 'FF1493', 'C71585'],
+    ...io_get_position_from_event(event),
   }
 
   confetti({
@@ -91,13 +113,14 @@ export function shoot_hearts() {
   })
 }
 
-function shoot_rainbows_and_unicorns() {
+function shoot_rainbows_and_unicorns(event: ConfettiEvent) {
   const defaults = {
     spread: 360,
     ticks: 100,
     gravity: 0,
     decay: 0.94,
     startVelocity: 30,
+    ...io_get_position_from_event(event),
   }
 
   function shoot() {
@@ -128,13 +151,12 @@ function shoot_rainbows_and_unicorns() {
 }
 
 let i = 0
-export const shoot_confetti = () => {
-  if (i % 3 === 0) {
-    shoot_stars()
-  } else if (i % 3 === 1) {
-    shoot_hearts()
-  } else {
-    shoot_rainbows_and_unicorns()
+export const shoot_confetti = (event: ConfettiEvent) => {
+  const round_robbin: Record<0 | 1 | 2, (o: ConfettiEvent) => void> = {
+    0: shoot_stars,
+    1: shoot_hearts,
+    2: shoot_rainbows_and_unicorns,
   }
-  i += 1
+
+  round_robbin[(i++ % 3) as 0 | 1 | 2](event)
 }

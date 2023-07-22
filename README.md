@@ -49,7 +49,8 @@
    1. ~let people remove guests~
    1. ~<https://github.com/tsparticles/react/#readme>~
       1. ~make even more refined; cycle through presets (thank you <https://confetti.js.org/more.html>)~
-   1. if someone has entered guest and they hit submit, then add the guest before submitting
+      1. ~see if it's possible to shoot confetti from (x,y) location of MouseEvent~
+   1. ~if someone has entered guest and they hit submit, then add the guest before submitting~
    1. add hotel information
    1. add venue information
    1. add airport information
@@ -57,5 +58,6 @@
    1. make accordion
    1. customize bootstrap color theme <https://colorhunt.co/> <https://getbootstrap.com/docs/5.3/customize/color/>
    1. console love letter
+   1. send emails whenever someone responds
 1. google app
    1. create prod app, deploy prod, and apply for review from google (this could take up to weeks, so...)
