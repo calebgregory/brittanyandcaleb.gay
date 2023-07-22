@@ -111,6 +111,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
   const last_submitted_values = useRef<
     MutationCreateParticipantArgs | MutationUpdateParticipantArgs | null
   >(null)
+  const [show_confetti_msg, set_show_confetti_msg] = useState<boolean>(false)
 
   const submit: MouseEventHandler<HTMLButtonElement> = async (event) => {
     event.preventDefault()
@@ -135,6 +136,11 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
     if (is_executing_mutation || is_equal(last_submitted_values.current, vars)) {
       // let them shoot confetti to their heart's content
       return
+    }
+    if (!show_confetti_msg) {
+      setTimeout(() => {
+        set_show_confetti_msg(true)
+      }, 777)
     }
 
     last_submitted_values.current = vars
@@ -280,6 +286,13 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
         <B.Button variant="primary" type="submit" size="lg" onClick={submit}>
           Submit! 🕊
         </B.Button>
+        {show_confetti_msg && (
+          <B.Collapse in appear>
+            <div style={{ fontSize: '.65rem' }}>
+              😏 (Feel free to hit this as many times as you want. It won't hurt anything.)
+            </div>
+          </B.Collapse>
+        )}
       </div>
       {mutation_error && (
         <B.Alert variant="danger" style={{ marginTop: '10px' }} dismissible>

@@ -41,7 +41,7 @@ def _collect_bc_gay_secrets(stack, stage):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--stage", choices=["devl"], default="devl")
+    parser.add_argument("--stage", choices=["devl", "prod"], default="devl")
     args = parser.parse_args()
 
     stack_name = _get_stack_name(args.stage)
@@ -64,7 +64,9 @@ def main():
         exit(1)
 
     stack_descriptions = json.loads(outs)
-    secrets = _collect_bc_gay_secrets(stack=_find_stack(stack_descriptions, stack_name), stage)
+    secrets = _collect_bc_gay_secrets(
+        stack=_find_stack(stack_descriptions, stack_name), stage=args.stage
+    )
 
     with open(os.path.join(THIS_DIR, "secrets/bc_gay_app.json"), "w") as f:
         json.dump(secrets, f, indent=2)

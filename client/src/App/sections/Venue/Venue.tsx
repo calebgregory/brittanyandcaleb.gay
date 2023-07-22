@@ -18,7 +18,7 @@ export const Venue = () => {
         <a href="https://goo.gl/maps/UBRuNCJaL8XmwVGVA" target="_blank" rel="noopener noreferrer">
           map
         </a>
-        ) at this Pavilion:
+        ) at the Lily Pad Pavilion:
       </p>
       <div style={{ marginBottom: '10px' }}>
         <img

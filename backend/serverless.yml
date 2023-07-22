@@ -19,7 +19,7 @@ plugins:
 custom:
   namespace: bc-gay
   version: v0
-  user_pool_client_hosted_ui_domain: brittanyandcaleb${self:custom.version}
+  user_pool_client_hosted_ui_domain: brittanyandcaleb${self:custom.version}${self:provider.stage}
 
 appSync:
   name: ${self:service}
@@ -156,6 +156,7 @@ resources:
 
     BCCognitoUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
+      DependsOn: BCCognitoUserPoolIdentityProviderGoogle
       Properties:
         ClientName: ${self:service}-user-pool-client-web-${self:provider.stage}
         GenerateSecret: false
@@ -223,7 +224,7 @@ resources:
     AppSyncToLambdaServiceRole:
       Type: 'AWS::IAM::Role'
       Properties:
-        RoleName: ${self:service}-appsync-to-lambda-service-role
+        RoleName: ${self:service}-${self:provider.stage}-appsync-to-lambda-service-role
         AssumeRolePolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -234,7 +235,7 @@ resources:
               Action:
                 - 'sts:AssumeRole'
         Policies:
-          - PolicyName: ${self:service}-appsync-to-lambda-service-role-policy
+          - PolicyName: ${self:service}-${self:provider.stage}-appsync-to-lambda-service-role-policy
             PolicyDocument:
               Version: '2012-10-17'
               Statement:

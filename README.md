@@ -43,7 +43,7 @@
 
 1. client
    1. ~display mutation execution errors in RSVP form~
-      -. ~prevent duplicate mutation executions~
+      1. ~prevent duplicate mutation executions~
    1. ~option to input name, prefilled with identity claims~
    1. ~use debug instead of console~
    1. ~let people remove guests~
@@ -54,8 +54,7 @@
    1. ~add hotel information~
    1. ~add venue information~
    1. ~add airport information~
-   1. style login screen with picture of us
-   1. make accordion
+   1. ~style login screen with picture of us~
    1. customize bootstrap color theme <https://colorhunt.co/> <https://getbootstrap.com/docs/5.3/customize/color/>
    1. console love letter
    1. send emails whenever someone responds

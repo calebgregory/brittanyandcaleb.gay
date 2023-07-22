@@ -36,11 +36,9 @@ export const RsvpInfo = ({ participant, engageEditMode }: Props) => {
         </ul>
       </div>
       If not, you can easily{' '}
-      <b>
-        <a href={`#${ids.rsvp_form}`} className="link-primary" onClick={engageEditMode}>
-          edit
-        </a>
-      </b>
+      <a href={`#${ids.rsvp_form}`} className="link-primary" onClick={engageEditMode}>
+        edit ↗
+      </a>
       .
     </div>
   )
