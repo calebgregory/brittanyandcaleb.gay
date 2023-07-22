@@ -1,0 +1,40 @@
+---
+introduction: The following hotels are all within a 10 minute drive to Bays Mountain Park (ceremony venue) and The Social (reception venue).
+hotels:
+  - name: MeadowView Conference Resort & Convention Center
+    url: https://goo.gl/maps/4kFvymVVMiw3BHZi6
+    address: 1901 Meadowview Pkway, Kingsport, TN 37660
+    distances: [9 min to the Social, 7 mins to Bays Mtn]
+    cost: $143/night
+    comment: This place is a Kingsport classic.  Caleb's prom was held here.  It's a nice hotel and has always been "the place" to stay for people traveling here on business trips.
+
+  - name: Fairfield Inn & Suites by Marriott
+    url: https://goo.gl/maps/PoUkzJHDq5zcUxYF8
+    address: 2485 South Wilcox Drive, Kingsport, TN, 37660
+    distances: [7 min to the Social, 8 min to Bays Mtn]
+    cost: $139/night
+    comment: This is Kingsport's newest hotel.  It's looks pretty nice!
+
+  - name: Comfort Suites Kingsport
+    url: https://goo.gl/maps/Ru1cvZ8ssMP6SFe67
+    address: 3005 Bays Meadow Pl, Kingsport, TN, 37660
+    distances: [9 min to the Social, 8 min to Bays Mtn]
+    cost: $115/night
+
+  - name: Hampton Inn Kingsport
+    url: https://goo.gl/maps/ZxhKxxY7Qyd9Dkik8
+    address: 2000 Enterprise Pl, Kingsport, TN, 37660
+    distances: [8 min to the Social, 6 min to Bays Mtn]
+    cost: $177/night
+
+  - name: Holiday Inn Express & Suites Kingsport
+    url: https://goo.gl/maps/4JpoVvxbw2eijGTb9
+    address: 1217 Stewball Cir, Kingsport, TN 37660
+    distances: [10 min to the Social, 9 min to Bays Mtn]
+    cost: $143/night
+
+  - name: Quality Inn
+    url: https://goo.gl/maps/tax5iyxTfHxdrSsB8
+    address: 3004 Bays Meadow Pl, Kingsport, TN 37664
+    distances: [9 min to the Social, 7 min to Bays Mtn]
+    cost: $73/night

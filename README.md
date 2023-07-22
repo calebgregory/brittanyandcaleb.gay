@@ -51,7 +51,7 @@
       1. ~make even more refined; cycle through presets (thank you <https://confetti.js.org/more.html>)~
       1. ~see if it's possible to shoot confetti from (x,y) location of MouseEvent~
    1. ~if someone has entered guest and they hit submit, then add the guest before submitting~
-   1. add hotel information
+   1. ~add hotel information~
    1. add venue information
    1. add airport information
    1. style login screen with picture of us

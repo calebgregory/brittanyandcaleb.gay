@@ -35,7 +35,8 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@craco/craco": "^7.1.0",
     "@types/debug": "^4.1.8",
-    "@types/lodash.isequal": "^4.5.6"
+    "@types/lodash.isequal": "^4.5.6",
+    "yaml-loader": "^0.8.0"
   },
   "scripts": {
     "start": "HTTPS=true craco start",
