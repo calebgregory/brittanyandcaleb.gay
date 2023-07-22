@@ -76,7 +76,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
     initialValues?.family_name || payload.family_name || ''
   )
 
-  const [attending, set_attending] = useState<boolean>(initialValues?.attending || false)
+  const [attending, set_attending] = useState<boolean>(initialValues?.attending || true)
 
   // Editing guests is a little complicated...
   const [guests, set_guests] = useState<ParticipantGuest[]>(
@@ -284,7 +284,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
       </div>
       <div className="d-grid gap-2">
         <B.Button variant="primary" type="submit" size="lg" onClick={submit}>
-          Submit! 🕊
+          Submit! {is_executing_mutation ? '🚀' : '🕊'}
         </B.Button>
         {show_confetti_msg && (
           <B.Collapse in appear>

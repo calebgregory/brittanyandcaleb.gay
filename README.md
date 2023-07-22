@@ -55,6 +55,7 @@
    1. ~add venue information~
    1. ~add airport information~
    1. ~style login screen with picture of us~
+   1. make "Submit!" say something else when confetti is all that's happening
    1. customize bootstrap color theme <https://colorhunt.co/> <https://getbootstrap.com/docs/5.3/customize/color/>
    1. console love letter
    1. send emails whenever someone responds

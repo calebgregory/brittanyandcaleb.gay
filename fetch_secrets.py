@@ -68,7 +68,9 @@ def main():
         stack=_find_stack(stack_descriptions, stack_name), stage=args.stage
     )
 
-    with open(os.path.join(THIS_DIR, "secrets/bc_gay_app.json"), "w") as f:
+    with open(
+        os.path.join(THIS_DIR, f"secrets/bc_gay_app.{args.stage}.json"), "w"
+    ) as f:
         json.dump(secrets, f, indent=2)
 
     print("done")

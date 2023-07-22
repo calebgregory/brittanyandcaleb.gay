@@ -40,7 +40,7 @@
   },
   "scripts": {
     "start": "HTTPS=true craco start",
-    "build": "bash ./build_config.sh && craco build",
+    "build": "bash ./build_config.sh \"$STAGE\" && craco build",
     "test": "craco test",
     "eject": "craco eject"
   },
