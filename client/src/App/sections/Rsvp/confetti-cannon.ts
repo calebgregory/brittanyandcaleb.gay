@@ -61,7 +61,7 @@ function shoot_stars() {
   setTimeout(shoot, 200)
 }
 
-function shoot_hearts() {
+export function shoot_hearts() {
   const defaults = {
     spread: 360,
     ticks: 100,

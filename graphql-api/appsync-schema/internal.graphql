@@ -30,7 +30,7 @@ input GetParticipantInput {
 }
 
 type GetParticipantResult {
-  participant: Participant!
+  participant: Participant
 }
 
 input ParticipantGuestInput {

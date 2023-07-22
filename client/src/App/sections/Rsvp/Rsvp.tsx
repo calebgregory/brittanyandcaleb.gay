@@ -1,4 +1,5 @@
 import React from 'react'
+import * as B from 'react-bootstrap'
 import { gql, useQuery } from 'urql'
 
 import { ids } from '@app/sections'
@@ -8,6 +9,8 @@ import { RsvpForm } from './RsvpForm'
 import { RsvpInfo } from './RsvpInfo'
 
 import { logger } from '@app/log'
+
+import { shoot_hearts } from './confetti-cannon'
 
 const log = logger('Rsvp')
 
@@ -78,5 +81,21 @@ export const Rsvp = () => {
     )
   }
 
-  return <p id={ids.rsvp_form}>I don't know what happened</p>
+  return (
+    <div id={ids.rsvp_form}>
+      <p>It looks like you haven't RSVP'd yet!</p>
+      <div className="d-grid gap-2">
+        <B.Button
+          variant="primary"
+          size="lg"
+          onClick={() => {
+            set_is_editing(true)
+            shoot_hearts()
+          }}
+        >
+          RSVP 💕
+        </B.Button>
+      </div>
+    </div>
+  )
 }

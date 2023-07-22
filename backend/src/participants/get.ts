@@ -15,6 +15,11 @@ export const get_participant = async (
   const resp = await dyn_client()
     .get({ TableName: config.dyn_table_name, Key: participant_key(input.email) })
     .promise()
+
+  if (!resp.Item) {
+    return { participant: null }
+  }
+
   // Yes, we pay for a GetItem that would be wasted here if the identity is
   // unauthzed.  Hopefully that does not bite us later.
   return { participant: raise_if_not_authorized(identity, resp.Item as Participant) }
