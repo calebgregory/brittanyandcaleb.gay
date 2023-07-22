@@ -1,5 +1,4 @@
 import React from 'react'
-import * as B from 'react-bootstrap'
 import { Participant } from 'brittanyandcaleb.gay.graphql-api/types'
 import { ids } from '@app/sections'
 

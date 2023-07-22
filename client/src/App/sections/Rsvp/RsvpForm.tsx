@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, MouseEventHandler } from 'react'
 import * as B from 'react-bootstrap'
 import { gql, useMutation } from 'urql'
 import {
@@ -108,7 +108,9 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
 
   const [submitted, set_submitted] = useState(false)
 
-  const submit = async () => {
+  const submit: MouseEventHandler<HTMLButtonElement> = async (event) => {
+    event.preventDefault()
+
     shoot_confetti()
     if (submitted) {
       // they can always back out and come back in, but in the meantime, let

@@ -1,5 +1,4 @@
 import React from 'react'
-import * as B from 'react-bootstrap'
 import { gql, useQuery } from 'urql'
 
 import { ids } from '@app/sections'
@@ -32,7 +31,7 @@ export const Rsvp = () => {
   const [is_editing, set_is_editing] = React.useState(false)
 
   const { payload } = useUser().getSignInUserSession()!.getIdToken()
-  const [query_result, reexecute_query] = useQuery({
+  const [query_result /* , reexecute_query */] = useQuery({
     query: GetParticipant,
     variables: { input: { email: payload.email } },
   })

@@ -49,6 +49,7 @@
    1. ~let people remove guests~
    1. ~<https://github.com/tsparticles/react/#readme>~
       1. ~make even more refined; cycle through presets (thank you <https://confetti.js.org/more.html>)~
+   1. if someone has entered guest and they hit submit, then add the guest before submitting
    1. add hotel information
    1. add venue information
    1. add airport information
