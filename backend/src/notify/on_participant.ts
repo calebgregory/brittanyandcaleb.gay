@@ -14,9 +14,12 @@ type ChangedAttrs = {
 }
 
 const _derive_changed_attrs = (old_item: Participant, new_item: Participant): ChangedAttrs => {
-  const keys = new Set([...Object.keys(old_item), ...Object.keys(new_item)]) as Set<
-    keyof Participant
-  >
+  const ignore_attrs = new Set<keyof Participant>(['PK', 'SK', 'item_version', 'last_written_at'])
+  const keys = new Set(
+    ([...Object.keys(old_item), ...Object.keys(new_item)] as Array<keyof Participant>).filter(
+      (k) => !ignore_attrs.has(k)
+    )
+  )
 
   const changed_attrs = [...keys].reduce<ChangedAttrs>((acc, key) => {
     const new_value = new_item[key]
@@ -47,7 +50,7 @@ const _unmarshall_record_image = (
   return AWS.DynamoDB.Converter.unmarshall(image) as Participant
 }
 
-const _derive_updates = (event: DynamoDBStreamEvent): Updates => {
+const _derive_updates = (event: DynamoDBStreamEvent): Partial<Updates> => {
   const inserted_records = event.Records.filter((record) => record.eventName === 'INSERT')
   const modified_records = event.Records.filter((record) => record.eventName === 'MODIFY')
   const removed_records = event.Records.filter((record) => record.eventName === 'REMOVE')
@@ -60,31 +63,38 @@ const _derive_updates = (event: DynamoDBStreamEvent): Updates => {
     .map((record) => _unmarshall_record_image(record.dynamodb?.OldImage))
     .filter(Boolean)
 
-  const updated: Updates['updated'] = []
+  const updates: Updates = { added, removed, updated: [] }
 
   for (const record of modified_records) {
     const old_item = _unmarshall_record_image(record.dynamodb?.OldImage)
     const new_item = _unmarshall_record_image(record.dynamodb?.NewImage)
 
     if (old_item && new_item) {
-      updated.push({
+      updates.updated.push({
         ..._derive_changed_attrs(old_item, new_item),
         PK: new_item.PK,
         SK: new_item.SK,
       })
     } else if (!old_item && new_item) {
-      added.push(new_item)
+      updates.added.push(new_item)
     } else if (old_item && !new_item) {
-      removed.push(old_item)
+      updates.removed.push(old_item)
     } else {
       logger.error('both old and new item are null in "MODIFY"d record', { record })
     }
   }
 
-  return { added, updated, removed }
+  // remove noise
+  for (const key of ['added', 'updated', 'removed'] as const) {
+    if (!updates[key].length) {
+      delete updates[key]
+    }
+  }
+
+  return updates
 }
 
-const _ses_send_email = async (updates: Updates) => {
+const _ses_send_email = async (updates: Partial<Updates>) => {
   const client = new AWS.SES({ region: config.region })
 
   if (!SES_TEMPLATE_NAME) {
@@ -113,6 +123,11 @@ const _ses_send_email = async (updates: Updates) => {
 
 export const notify_on_participant_update = async (event: DynamoDBStreamEvent) => {
   const updates = _derive_updates(event)
+
+  if (Object.keys(updates).length === 0) {
+    logger.warn('no updates to notify about', { Key: event.Records[0].dynamodb?.Keys })
+    return
+  }
 
   await _ses_send_email(updates)
 }

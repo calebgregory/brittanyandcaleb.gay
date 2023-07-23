@@ -6,21 +6,27 @@ export const Venue = () => {
   return (
     <div className="section_container" id={ids.wedding_venue}>
       <h2>Wedding Venue</h2>
-      <p>
-        The wedding ceremony will be at{' '}
-        <a
-          href="https://www.baysmountain.com/park/park-overview/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Bays Mountain Park
-        </a>{' '}
-        in Kingsport, TN (
-        <a href="https://goo.gl/maps/UBRuNCJaL8XmwVGVA" target="_blank" rel="noopener noreferrer">
-          map
-        </a>
-        ) at the Lily Pad Pavilion:
-      </p>
+      <p>The wedding ceremony will be</p>
+      <ul>
+        <li>
+          on <b>October 8, 2023</b> at <b>4 o'clock PM</b> EDT
+        </li>
+        <li>
+          at{' '}
+          <a
+            href="https://www.baysmountain.com/park/park-overview/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Bays Mountain Park
+          </a>{' '}
+          in Kingsport, TN (
+          <a href="https://goo.gl/maps/UBRuNCJaL8XmwVGVA" target="_blank" rel="noopener noreferrer">
+            map
+          </a>
+          ) at the Lily Pad Pavilion:
+        </li>
+      </ul>
       <div style={{ marginBottom: '10px' }}>
         <img
           src="/assets/bays_mountain.jpg"

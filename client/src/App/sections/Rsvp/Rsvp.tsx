@@ -11,6 +11,8 @@ import { RsvpForm } from './RsvpForm'
 import { RsvpInfo } from './RsvpInfo'
 import { shoot_hearts } from './confetti-cannon'
 
+import './Rsvp.css'
+
 const log = logger('Rsvp')
 
 const GetParticipant = gql`

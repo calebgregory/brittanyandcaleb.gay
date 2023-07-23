@@ -1,3 +1,7 @@
+#rsvp_info_container {
+  max-width: 430px;
+}
+
 .rsvp_form_label {
   font-weight: 600;
   font-size: 0.9rem;

@@ -12,7 +12,7 @@ export const RsvpInfo = ({ participant, engageEditMode }: Props) => {
   return (
     <div>
       <p>It looks like you have already RSVP'd! Does this look right?</p>
-      <div className="clearfix">
+      <div className="clearfix" id="rsvp_info_container">
         <button
           className="btn btn-secondary float-end"
           style={{ marginRight: '20px' }}

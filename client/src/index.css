@@ -14,6 +14,13 @@ code {
   padding: 10px 15px;
 }
 
+@media only screen and (min-width: 768px) {
+  #app {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
 #app > .section_container {
   margin-bottom: 15px;
 }
