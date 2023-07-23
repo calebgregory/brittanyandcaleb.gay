@@ -25,12 +25,12 @@ const _is_retryable_error = (error: unknown) => {
   return false
 }
 
-type UpdateDiff = {
+export type UpdateDiff = {
   set_attrs: Map<string, any>
   remove_attrs: Set<string>
 }
 
-export const _derive_item_diff = <T extends Record<string, any>>(
+export const derive_item_diff = <T extends Record<string, any>>(
   old_item: T,
   new_item: T
 ): UpdateDiff | null => {
@@ -132,7 +132,7 @@ export const dyn_transact_versioned_update_item = async <T extends TransactableI
 
     const updated_item: T = updater_fn(clone_deep(curr_item)) // it's important that this is a deep clone
 
-    const diff = _derive_item_diff(curr_item, updated_item)
+    const diff = derive_item_diff(curr_item, updated_item)
 
     if (!diff) {
       logger.warn('Update was called, but there is no difference in item; exiting', { item_key })

@@ -6,7 +6,7 @@ provider:
   runtime: nodejs16.x
   stage: ${opt:stage, 'devl'}
   iam:
-    role: { 'Fn::GetAtt': [AppSyncLambdaRole, Arn] }
+    role: BCLambdaRole
   environment:
     # https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-retrieve
     STACK_NAME: ${self:service}
@@ -20,6 +20,8 @@ custom:
   namespace: bc-gay
   version: v0
   user_pool_client_hosted_ui_domain: brittanyandcaleb${self:custom.version}${self:provider.stage}
+  ses_template_names:
+    notify_on_participant: ${self:service}-${self:provider.stage}-notify-template
 
 appSync:
   name: ${self:service}
@@ -80,7 +82,23 @@ appSync:
       request: mapping-templates/generic-request.vtl
       response: mapping-templates/response-throw-runtime-error.vtl
 
-# you can add CloudFormation resource templates here
+functions:
+  sendEmail:
+    handler: build/dynstream/internal.DYN_sendEmail
+    memorySize: 1024
+    timeout: 900
+    role: BCStreamHandlerLambdaRole
+    environment:
+      SES_TEMPLATE_NAME: ${self:custom.ses_template_names.notify_on_participant}
+      SES_EMAIL_RECIPIENTS: ${env:SES_EMAIL_RECIPIENTS}
+    events:
+      - stream:
+          type: dynamodb
+          arn: { 'Fn::GetAtt': [BCDynamoDBTable, StreamArn] }
+
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification-format.html
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
+# ^ a man's best friend
 resources:
   Resources:
     # Creates a role that allows Cognito to send SES messages
@@ -196,6 +214,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
 
     AppSyncLogRole:
       Type: AWS::IAM::Role
@@ -247,10 +267,10 @@ resources:
                   Resource:
                     - arn:aws:lambda:${self:provider.region}:*:function:${self:service}-${self:provider.stage}-*
 
-    AppSyncLambdaRole:
+    BCLambdaRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: ${self:service}-${self:provider.stage}-appsync-lambda-role
+        RoleName: ${self:service}-${self:provider.stage}-lambda-role
         AssumeRolePolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -292,6 +312,63 @@ resources:
                     - dynamodb:BatchGetItem
                     - dynamodb:BatchWriteItem
                   Resource: { 'Fn::GetAtt': [BCDynamoDBTable, Arn] }
+
+    BCStreamHandlerLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:service}-${self:provider.stage}-strm-lambda-role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          # TODO: use managed policies
+          - PolicyName: ${self:service}-${self:provider.stage}-policy-StrmLogWriter
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - 'Fn::Join':
+                        - ':'
+                        - - 'arn:aws:logs'
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - 'log-group:/aws/lambda/*:*:*'
+          - PolicyName: ${self:service}-${self:provider.stage}-policy-DynamoStreamWriteAccess
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:GetRecords
+                    - dynamodb:GetShardIterator
+                    - dynamodb:DescribeStream
+                    - dynamodb:ListStreams
+                  Resource: { 'Fn::GetAtt': [BCDynamoDBTable, StreamArn] }
+                - Effect: Allow # because this thing is sending emails
+                  Action:
+                    - ses:SendTemplatedEmail
+                    - ses:SendEmail
+                    - ses:SendRawEmail
+                  Resource:
+                    - '*'
+    SESAdminCreateUserEmailTemplate:
+      Type: 'AWS::SES::Template'
+      Properties:
+        Template:
+          TemplateName: ${self:custom.ses_template_names.notify_on_participant}
+          SubjectPart: '🌈 🎉 It looks like we have an RSVP❣️'
+          HtmlPart: ${file(email-templates/notify_on_participant/template.html)}
+          TextPart: ${file(email-templates/notify_on_participant/template.txt)}
 
   Outputs:
     BCCognitoUserPoolId:

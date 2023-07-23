@@ -39,7 +39,9 @@
     "start": "HTTPS=true craco start",
     "build": "bash ./build_config.sh \"$STAGE\" && craco build",
     "test": "craco test",
-    "eject": "craco eject"
+    "eject": "craco eject",
+    "bud:devl": "STAGE=devl yarn build && ./deploy.sh",
+    "bud:prod": "STAGE=prod yarn build && ./deploy.sh"
   },
   "eslintConfig": {
     "extends": [

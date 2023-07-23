@@ -7,7 +7,9 @@
   "nohoist": true,
   "scripts": {
     "deploy": "source load_secrets.sh && serverless deploy",
-    "build": "rm -rf build/* && tsc -p tsconfig.json"
+    "build": "rm -rf build/* && tsc -p tsconfig.json",
+    "bud:devl": "STAGE=devl; yarn build && yarn deploy --stage \"$STAGE\"",
+    "bud:prod": "STAGE=prod; yarn build && yarn deploy --stage \"$STAGE\""
   },
   "workspaces": {
     "nohoist": [
