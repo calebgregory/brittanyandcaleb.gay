@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState, MouseEvent } from 'react'
-import * as B from 'react-bootstrap'
-import is_equal from 'lodash.isequal'
-import { gql, useMutation } from 'urql'
+
+import { useUser } from '@app/hooks/useUser'
+import { logger } from '@app/log'
 import {
   Mutation,
   MutationCreateParticipantArgs,
@@ -9,9 +9,10 @@ import {
   Participant,
   ParticipantGuest,
 } from 'brittanyandcaleb.gay.graphql-api/types'
+import is_equal from 'lodash.isequal'
+import * as B from 'react-bootstrap'
+import { gql, useMutation } from 'urql'
 
-import { useUser } from '@app/hooks/useUser'
-import { logger } from '@app/log'
 import './index.css'
 import { shoot_confetti, shoot_tears } from './confetti-cannon'
 
@@ -93,11 +94,13 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
   const add_guest = useCallback(
     (name: string) => {
       name = name.trim()
+
       if (!name) {
         return guests
       }
 
       const next_guests = [...guests]
+
       if (editing_existing_guest.index > -1) {
         next_guests.splice(editing_existing_guest.index, 0, { name })
       } else {
@@ -126,6 +129,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
       event.preventDefault()
 
       const _attending = attending_button_value ?? attending
+
       if (typeof _attending !== 'boolean') {
         // this actually cannot happen because we disable the submit button when attending is null
         return

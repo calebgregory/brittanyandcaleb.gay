@@ -1,7 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
   "extends": ["prettier", "plugin:@typescript-eslint/recommended", "plugin:jest-formatting/recommended"],
-  "plugins": ["react", "@typescript-eslint", "react-hooks", "import",  "no-only-tests"],
+  "plugins": ["@typescript-eslint",  "import",  "no-only-tests"],
   "settings": {
     "import/internal-regex": "^src",
     /* "import/ignore": ["react"], */
@@ -15,11 +15,6 @@
   },
   "rules": {
     "no-console": "warn",
-    "react-hooks/rules-of-hooks": "error",
-    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
-    "react/prefer-stateless-function": [2, { "ignorePureComponents": true }],
-    "react/forbid-prop-types": [0, { "forbid": [] }],
-    "react/no-array-index-key": "warn",
     "import/extensions": [1, "never", { "svg": "always", "json": "always" }],
     "import/no-extraneous-dependencies": [
       "error",

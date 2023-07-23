@@ -1,12 +1,13 @@
 import React from 'react'
-import * as B from 'react-bootstrap'
-import { Welcome } from './sections/Welcome'
-import { Rsvp } from './sections/Rsvp'
-import { Venue } from './sections/Venue'
-import { Accommodations } from './sections/Accommodations'
-import { useUser } from '@app/hooks/useUser'
 
 import { config } from '@app/config'
+import { useUser } from '@app/hooks/useUser'
+import * as B from 'react-bootstrap'
+
+import { Accommodations } from './sections/Accommodations'
+import { Rsvp } from './sections/Rsvp'
+import { Venue } from './sections/Venue'
+import { Welcome } from './sections/Welcome'
 
 const SignOutButton = () => {
   const user = useUser()

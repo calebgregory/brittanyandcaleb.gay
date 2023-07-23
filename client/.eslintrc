@@ -1,0 +1,11 @@
+{
+  "extends": "../.eslintrc",
+  "plugins": ["react", "react-hooks"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+    "react/prefer-stateless-function": [2, { "ignorePureComponents": true }],
+    "react/forbid-prop-types": [0, { "forbid": [] }],
+    "react/no-array-index-key": "warn"
+  }
+}

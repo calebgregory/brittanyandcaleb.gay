@@ -2,11 +2,6 @@
   "name": "brittanyandcaleb.gay.client",
   "version": "0.1.0",
   "private": true,
-  "workspaces": {
-    "nohoist": [
-      "**"
-    ]
-  },
   "dependencies": {
     "@aws-amplify/auth": "^5.5.4",
     "@react-oauth/google": "^0.11.0",
@@ -36,6 +31,8 @@
     "@craco/craco": "^7.1.0",
     "@types/debug": "^4.1.8",
     "@types/lodash.isequal": "^4.5.6",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.5.0",
     "yaml-loader": "^0.8.0"
   },
   "scripts": {

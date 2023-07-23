@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { ids } from '@app/sections'
 import { useUser } from '@app/hooks/useUser'
+import { ids } from '@app/sections'
 
 export const Welcome = () => {
   const user = useUser()

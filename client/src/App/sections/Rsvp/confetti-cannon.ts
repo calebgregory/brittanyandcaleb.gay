@@ -155,6 +155,7 @@ export function shoot_tears(event: ConfettiEvent) {
 }
 
 let i = 0
+
 export const shoot_confetti = (event: ConfettiEvent) => {
   const round_robbin: Record<0 | 1 | 2, (o: ConfettiEvent) => void> = {
     0: shoot_stars,

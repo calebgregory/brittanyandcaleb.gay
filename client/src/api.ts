@@ -1,4 +1,5 @@
 import { Client, cacheExchange, fetchExchange } from 'urql'
+
 import { config } from './config'
 
 export const build_gql_client = (getToken: () => string) => {

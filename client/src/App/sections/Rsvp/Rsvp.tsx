@@ -1,16 +1,14 @@
 import React from 'react'
+
+import { useUser } from '@app/hooks/useUser'
+import { logger } from '@app/log'
+import { ids } from '@app/sections'
+import { Query, QueryGetParticipantArgs } from 'brittanyandcaleb.gay.graphql-api/types'
 import * as B from 'react-bootstrap'
 import { gql, useQuery } from 'urql'
-import { Query, QueryGetParticipantArgs } from 'brittanyandcaleb.gay.graphql-api/types'
-
-import { ids } from '@app/sections'
-import { useUser } from '@app/hooks/useUser'
 
 import { RsvpForm } from './RsvpForm'
 import { RsvpInfo } from './RsvpInfo'
-
-import { logger } from '@app/log'
-
 import { shoot_hearts } from './confetti-cannon'
 
 const log = logger('Rsvp')

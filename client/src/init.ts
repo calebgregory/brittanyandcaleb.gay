@@ -1,12 +1,11 @@
+import { load_confetti_canon_cdn } from '@app/App/sections/Rsvp/confetti-cannon'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import type { CognitoUser } from 'amazon-cognito-identity-js'
 import { Auth } from 'aws-amplify'
 import { Client } from 'urql'
 
-import { load_confetti_canon_cdn } from '@app/App/sections/Rsvp/confetti-cannon'
-
-import { config } from './config'
 import { build_gql_client } from './api'
+import { config } from './config'
 import * as log from './log'
 
 const logger = log.logger('init')
@@ -57,6 +56,7 @@ const fetch_tokens_using_auth_code = async (auth_code: string) => {
     body,
   })
   const resp_body = await resp.json()
+
   if (!resp.ok) {
     logger.error('fetch_tokens_using_auth_code', { error: resp_body })
     return null
@@ -66,6 +66,7 @@ const fetch_tokens_using_auth_code = async (auth_code: string) => {
 
 const refresh_user_session = async (user: CognitoUser): Promise<CognitoUser> => {
   const refresh_token = user.getSignInUserSession()?.getRefreshToken()
+
   if (!refresh_token) {
     throw new Error('got user, but no refresh token')
   }
@@ -102,6 +103,7 @@ export async function init(): Promise<App | null> {
   const auth_code = params.get('code')
 
   let user: CognitoUser | null = null
+
   try {
     user = await Auth.currentAuthenticatedUser()
   } catch (error) {
@@ -110,6 +112,7 @@ export async function init(): Promise<App | null> {
 
   if (user) {
     logger.info('got cached user', { user })
+
     try {
       user = await refresh_user_session(user)
       return {
@@ -126,6 +129,7 @@ export async function init(): Promise<App | null> {
 
   if (auth_code) {
     const fetched_tokens = await fetch_tokens_using_auth_code(auth_code)
+
     if (fetched_tokens) {
       const { id_token, access_token, refresh_token } = fetched_tokens
       user = await cache_amplify_user_session_using_fetched_tokens(

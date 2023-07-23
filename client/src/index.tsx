@@ -1,4 +1,5 @@
 import React from 'react'
+
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'urql'
 
@@ -10,7 +11,6 @@ import { SignIn } from './SignIn/SignIn'
 import { UserProvider } from './hooks/useUser'
 import { init } from './init'
 import reportWebVitals from './reportWebVitals'
-
 import { init_match_system_color_mode } from './system-colors'
 
 init_match_system_color_mode()

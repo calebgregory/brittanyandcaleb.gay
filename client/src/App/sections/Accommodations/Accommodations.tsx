@@ -1,8 +1,7 @@
 import React from 'react'
 
-import { ids } from '@app/sections'
-
 import info from '@app/App/sections/Accommodations/hotels.yml'
+import { ids } from '@app/sections'
 
 export const Accommodations = () => {
   return (

@@ -1,6 +1,7 @@
 import React from 'react'
-import { Participant } from 'brittanyandcaleb.gay.graphql-api/types'
+
 import { ids } from '@app/sections'
+import { Participant } from 'brittanyandcaleb.gay.graphql-api/types'
 
 type Props = {
   participant: Participant
