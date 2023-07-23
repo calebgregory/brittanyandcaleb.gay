@@ -28,7 +28,7 @@ export const RsvpInfo = ({ participant, engageEditMode }: Props) => {
                 {participant.guests.length ? (
                   participant.guests.map((guest, index) => <li key={index}>{guest.name}</li>)
                 ) : (
-                  <li>None</li>
+                  <li>No one, at the moment</li>
                 )}
               </ul>
             </li>
