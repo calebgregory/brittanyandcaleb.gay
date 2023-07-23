@@ -1,4 +1,4 @@
-import React, { useRef, useState, MouseEventHandler } from 'react'
+import React, { useCallback, useRef, useState, MouseEvent } from 'react'
 import * as B from 'react-bootstrap'
 import is_equal from 'lodash.isequal'
 import { gql, useMutation } from 'urql'
@@ -13,7 +13,7 @@ import {
 import { useUser } from '@app/hooks/useUser'
 import { logger } from '@app/log'
 import './index.css'
-import { shoot_confetti } from './confetti-cannon'
+import { shoot_confetti, shoot_tears } from './confetti-cannon'
 
 const log = logger('RsvpForm')
 
@@ -76,7 +76,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
     initialValues?.family_name || payload.family_name || ''
   )
 
-  const [attending, set_attending] = useState<boolean>(initialValues?.attending || true)
+  const [attending, set_attending] = useState<boolean | null>(initialValues?.attending || null)
 
   // Editing guests is a little complicated...
   const [guests, set_guests] = useState<ParticipantGuest[]>(
@@ -90,93 +90,114 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
 
   const input_ref = useRef<HTMLInputElement>(null)
 
-  const add_guest = (name: string) => {
-    name = name.trim()
-    if (!name) {
-      return guests
-    }
+  const add_guest = useCallback(
+    (name: string) => {
+      name = name.trim()
+      if (!name) {
+        return guests
+      }
 
-    const next_guests = [...guests]
-    if (editing_existing_guest.index > -1) {
-      next_guests.splice(editing_existing_guest.index, 0, { name })
-    } else {
-      next_guests.push({ name })
-    }
-    set_guests(next_guests)
+      const next_guests = [...guests]
+      if (editing_existing_guest.index > -1) {
+        next_guests.splice(editing_existing_guest.index, 0, { name })
+      } else {
+        next_guests.push({ name })
+      }
+      set_guests(next_guests)
 
-    set_guest_name('')
-    return next_guests
-  }
+      set_guest_name('')
+      return next_guests
+    },
+    [guests, editing_existing_guest]
+  )
 
   const last_submitted_values = useRef<
     MutationCreateParticipantArgs | MutationUpdateParticipantArgs | null
   >(null)
   const [show_confetti_msg, set_show_confetti_msg] = useState<boolean>(false)
+  const [submit_button_text, set_submit_button_text] = useState<string>('Submit! 🕊')
 
-  const submit: MouseEventHandler<HTMLButtonElement> = async (event) => {
-    event.preventDefault()
+  const mutation =
+    initialValues || create_mutation_result.data || update_mutation_result.data
+      ? update_participant
+      : create_participant
+  const submit = useCallback(
+    async (event: MouseEvent<HTMLButtonElement>, attending_button_value?: boolean) => {
+      event.preventDefault()
 
-    shoot_confetti(event)
+      const _attending = attending_button_value ?? attending
+      if (typeof _attending !== 'boolean') {
+        // this actually cannot happen because we disable the submit button when attending is null
+        return
+      }
 
-    const mutation = initialValues ? update_participant : create_participant
+      const vars = {
+        input: {
+          email: payload.email,
+          given_name: given_name.trim(),
+          family_name: family_name.trim(),
+          attending: _attending,
+          guests: add_guest(guest_name),
+          //      ^ when user submits form, if they have entered a guest name
+          // without having "added" it, we add it for them, thinking that'd
+          // be the least surprising behavior
+        },
+      }
 
-    const vars = {
-      input: {
-        email: payload.email,
-        given_name: given_name.trim(),
-        family_name: family_name.trim(),
-        attending,
-        guests: add_guest(guest_name),
-        //      ^ when user submits form, if they have entered a guest name
-        // without having "added" it, we add it for them, thinking that'd
-        // be the least surprising behavior
-      },
+      if (is_executing_mutation || is_equal(last_submitted_values.current, vars)) {
+        // let them shoot confetti to their heart's content
+        return
+      }
+
+      if (!show_confetti_msg) {
+        setTimeout(() => {
+          set_show_confetti_msg(true)
+        }, 777)
+      }
+
+      last_submitted_values.current = vars
+      set_submit_button_text('🚀')
+      const resp = await mutation(vars)
+      log.debug('mutation result', resp)
+      set_submit_button_text(
+        resp.error
+          ? 'Submit! 🕊'
+          : vars.input.attending
+          ? '🎉 We look forward to seeing you!'
+          : 'Thank you for responding❣️'
+      )
+
+      if (!resp.error) {
+        onSubmit()
+      }
+    },
+    [
+      payload.email,
+      given_name,
+      family_name,
+      attending,
+      guests.map(({ name }) => name).join('|'),
+      guest_name,
+      add_guest,
+      set_submit_button_text,
+      mutation,
+      is_executing_mutation,
+      show_confetti_msg,
+      onSubmit,
+    ]
+  )
+
+  const reset_submit_button_text = useCallback(() => {
+    if (submit_button_text !== 'Submit! 🕊') {
+      set_submit_button_text('Submit! 🕊')
     }
-
-    if (is_executing_mutation || is_equal(last_submitted_values.current, vars)) {
-      // let them shoot confetti to their heart's content
-      return
-    }
-    if (!show_confetti_msg) {
-      setTimeout(() => {
-        set_show_confetti_msg(true)
-      }, 777)
-    }
-
-    last_submitted_values.current = vars
-    const resp = await mutation(vars)
-    log.debug('mutation result', resp)
-
-    if (!resp.error) {
-      onSubmit()
-    }
-  }
+  }, [submit_button_text, set_submit_button_text])
 
   return (
     <B.Form>
       <div>
         <B.CloseButton className="float-end" onClick={goBack} />
-        <B.Form.Group
-          controlId="formAttendingYes"
-          className="mb-3"
-          style={{ marginBottom: '10px' }}
-        >
-          <B.Form.Check
-            type="radio"
-            label="Yes, I plan on coming!"
-            checked={attending === true}
-            onChange={() => set_attending(true)}
-          />
-        </B.Form.Group>
-        <B.Form.Group controlId="formAttendingNo" className="mb-3">
-          <B.Form.Check
-            type="radio"
-            label="No, I can't make it."
-            checked={attending === false}
-            onChange={() => set_attending(false)}
-          />
-        </B.Form.Group>
-        <div className="rsvp_form_label">Aaand, what's your name?</div>
+        <div className="rsvp_form_label">What's your name?</div>
         <B.InputGroup className="mb-3">
           <B.FloatingLabel controlId="given_name" label="First">
             <B.Form.Control
@@ -185,6 +206,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
               value={given_name}
               required
               onChange={(event) => {
+                reset_submit_button_text()
                 set_given_name(event.target.value)
               }}
               aria-label="First name"
@@ -203,6 +225,37 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
             />
           </B.FloatingLabel>
         </B.InputGroup>
+        <div className="rsvp_form_label">Aaaand, will you be attending?</div>
+        <B.Row>
+          <B.Col xs={6} className="mb-3">
+            <B.Button
+              style={{ width: '100%' }}
+              variant={attending === true ? 'success' : 'outline-success'}
+              onClick={(event) => {
+                set_attending(true)
+                set_submit_button_text('')
+                shoot_confetti(event)
+                submit(event, true)
+              }}
+            >
+              Yes, I'm coming!
+            </B.Button>
+          </B.Col>
+          <B.Col xs={6} className="mb-3">
+            <B.Button
+              style={{ width: '100%' }}
+              variant={attending === false ? 'danger' : 'outline-danger'}
+              onClick={(event) => {
+                set_attending(false)
+                set_submit_button_text('')
+                shoot_tears(event)
+                submit(event, false)
+              }}
+            >
+              No, I can't make it.
+            </B.Button>
+          </B.Col>
+        </B.Row>
         <div className="rsvp_form_label">
           Who do you plan on bringing?{' '}
           {guests.length ? <span style={{ fontSize: '0.7rem' }}>(Tap name to edit)</span> : null}
@@ -217,6 +270,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
                       set_guests(guests.filter((_g, i) => i !== index))
                       set_editing_existing_guest({ name: guest.name, index })
                       set_guest_name(guest.name)
+                      reset_submit_button_text()
                       input_ref.current?.focus()
                     }}
                   >
@@ -244,6 +298,7 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
                   value={guest_name}
                   onChange={(event) => {
                     set_guest_name(event.target.value)
+                    reset_submit_button_text()
                   }}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter') {
@@ -283,8 +338,17 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
         </B.Form.Group>
       </div>
       <div className="d-grid gap-2">
-        <B.Button variant="primary" type="submit" size="lg" onClick={submit}>
-          Submit! {is_executing_mutation ? '🚀' : '🕊'}
+        <B.Button
+          variant="primary"
+          type="submit"
+          size="lg"
+          disabled={attending === null}
+          onClick={(event) => {
+            shoot_confetti(event)
+            submit(event)
+          }}
+        >
+          {submit_button_text}
         </B.Button>
         {show_confetti_msg && (
           <B.Collapse in appear>

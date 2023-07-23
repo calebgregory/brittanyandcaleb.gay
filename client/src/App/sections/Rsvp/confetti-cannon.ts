@@ -62,19 +62,8 @@ function shoot_stars(event: ConfettiEvent) {
   }
 
   function shoot() {
-    confetti({
-      ...defaults,
-      particleCount: 40,
-      scalar: 1.2,
-      shapes: ['star'],
-    })
-
-    confetti({
-      ...defaults,
-      particleCount: 10,
-      scalar: 0.75,
-      shapes: ['circle'],
-    })
+    confetti({ ...defaults, particleCount: 40, scalar: 1.2, shapes: ['star'] })
+    confetti({ ...defaults, particleCount: 10, scalar: 0.75, shapes: ['circle'] })
   }
 
   setTimeout(shoot, 0)
@@ -94,23 +83,9 @@ export function shoot_hearts(event: ConfettiEvent) {
     ...io_get_position_from_event(event),
   }
 
-  confetti({
-    ...defaults,
-    particleCount: 50,
-    scalar: 2,
-  })
-
-  confetti({
-    ...defaults,
-    particleCount: 25,
-    scalar: 3,
-  })
-
-  confetti({
-    ...defaults,
-    particleCount: 10,
-    scalar: 4,
-  })
+  confetti({ ...defaults, particleCount: 50, scalar: 2 })
+  confetti({ ...defaults, particleCount: 25, scalar: 3 })
+  confetti({ ...defaults, particleCount: 10, scalar: 4 })
 }
 
 function shoot_rainbows_and_unicorns(event: ConfettiEvent) {
@@ -137,11 +112,40 @@ function shoot_rainbows_and_unicorns(event: ConfettiEvent) {
       particleCount: 20,
       scalar: 2,
       shapes: ['text'],
-      shapeOptions: {
-        text: {
-          value: ['🦄', '🌈'],
-        },
-      },
+      shapeOptions: { text: { value: ['🦄', '🌈'] } },
+    })
+  }
+
+  setTimeout(shoot, 0)
+  setTimeout(shoot, 100)
+  setTimeout(shoot, 200)
+}
+
+export function shoot_tears(event: ConfettiEvent) {
+  const defaults = {
+    spread: 360,
+    ticks: 100,
+    gravity: 0,
+    decay: 0.94,
+    startVelocity: 30,
+    ...io_get_position_from_event(event),
+  }
+
+  function shoot() {
+    confetti({
+      ...defaults,
+      particleCount: 30,
+      scalar: 1.2,
+      shapes: ['text'],
+      shapeOptions: { text: { value: ['😢', '💧'] } },
+    })
+
+    confetti({
+      ...defaults,
+      particleCount: 20,
+      scalar: 2,
+      shapes: ['text'],
+      shapeOptions: { text: { value: ['😭', '💧'] } },
     })
   }
 

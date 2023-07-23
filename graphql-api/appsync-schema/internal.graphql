@@ -41,7 +41,7 @@ input CreateParticipantInput {
   email: ID!
   given_name: String!
   family_name: String!
-  attending: Boolean
+  attending: Boolean!
   guests: [ParticipantGuestInput!]
 }
 
