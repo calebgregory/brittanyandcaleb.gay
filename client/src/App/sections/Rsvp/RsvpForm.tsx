@@ -233,7 +233,6 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
               variant={attending === true ? 'success' : 'outline-success'}
               onClick={(event) => {
                 set_attending(true)
-                set_submit_button_text('')
                 shoot_confetti(event)
                 submit(event, true)
               }}
@@ -247,7 +246,6 @@ export function RsvpForm({ initialValues, goBack, onSubmit }: Props) {
               variant={attending === false ? 'danger' : 'outline-danger'}
               onClick={(event) => {
                 set_attending(false)
-                set_submit_button_text('')
                 shoot_tears(event)
                 submit(event, false)
               }}
