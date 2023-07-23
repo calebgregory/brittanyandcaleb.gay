@@ -14,7 +14,7 @@ type Participant {
   given_name: String!
   family_name: String!
   attending: Boolean!
-  guests: [ParticipantGuest!]
+  guests: [ParticipantGuest!]!
   created_at: AWSDateTime!
   updated_at: AWSDateTime!
 }
