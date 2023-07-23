@@ -7,6 +7,7 @@ import { Client } from 'urql'
 import { build_gql_client } from './api'
 import { config } from './config'
 import * as log from './log'
+import { log_love_note } from './love-note'
 
 const logger = log.logger('init')
 
@@ -91,6 +92,7 @@ type App = { user: CognitoUser; gql_client: Client }
 export async function init(): Promise<App | null> {
   log.enable(config.log_config)
 
+  log_love_note()
   load_confetti_canon_cdn()
 
   Auth.configure({

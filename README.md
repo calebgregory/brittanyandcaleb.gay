@@ -57,7 +57,7 @@
    1. ~style login screen with picture of us~
    1. ~make "Submit!" say something else when confetti is all that's happening~
    1. customize bootstrap color theme <https://colorhunt.co/> <https://getbootstrap.com/docs/5.3/customize/color/>
-   1. console love letter
+   1. ~console love letter~
    1. ~send emails whenever someone responds~
 1. ~google app~
    1. ~create prod app, deploy prod, and apply for review from google (this could take up to weeks, so... (this was immediate because of the scopes we used and we didn't include a logo))~
