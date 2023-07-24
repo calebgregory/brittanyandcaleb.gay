@@ -61,3 +61,5 @@
    1. ~send emails whenever someone responds~
 1. ~google app~
    1. ~create prod app, deploy prod, and apply for review from google (this could take up to weeks, so... (this was immediate because of the scopes we used and we didn't include a logo))~
+1. backend
+   1. nightly email about who all has signed up <https://www.serverless.com/blog/cron-jobs-on-aws/>
