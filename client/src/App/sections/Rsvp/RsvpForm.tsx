@@ -13,7 +13,6 @@ import is_equal from 'lodash.isequal'
 import * as B from 'react-bootstrap'
 import { gql, useMutation } from 'urql'
 
-import './Rsvp.css'
 import { shoot_confetti, shoot_tears } from './confetti-cannon'
 
 const log = logger('RsvpForm')

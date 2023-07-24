@@ -1,4 +1,4 @@
-import { load_confetti_canon_cdn } from '@app/App/sections/Rsvp/confetti-cannon'
+import { load_confetti_cannon_cdn } from '@app/App/sections/Rsvp/confetti-cannon'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import type { CognitoUser } from 'amazon-cognito-identity-js'
 import { Auth } from 'aws-amplify'
@@ -93,7 +93,7 @@ export async function init(): Promise<App | null> {
   log.enable(config.log_config)
 
   log_love_note()
-  load_confetti_canon_cdn()
+  load_confetti_cannon_cdn()
 
   Auth.configure({
     region: 'us-east-1',

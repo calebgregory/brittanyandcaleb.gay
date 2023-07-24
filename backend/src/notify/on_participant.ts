@@ -112,7 +112,7 @@ const _ses_send_email = async (updates: Updates) => {
 
   const params: AWS.SES.SendTemplatedEmailRequest = {
     Source: 'Caleb Gregory <calebgregory@gmail.com>', // must be verified in SES
-    Destination: { ToAddresses: SES_EMAIL_RECIPIENTS }, // If your account is still in the sandbox, these addresses must be verified, too:
+    Destination: { ToAddresses: SES_EMAIL_RECIPIENTS }, // If your account is still in the sandbox, these addresses must be verified, too
     Template: SES_TEMPLATE_NAME,
     TemplateData: JSON.stringify({
       PKs: JSON.stringify([...updates.PKs]),

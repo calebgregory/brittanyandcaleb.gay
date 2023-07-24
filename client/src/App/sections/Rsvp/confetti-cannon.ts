@@ -6,7 +6,7 @@ import { logger } from '@app/log'
 
 const log = logger('confetti-cannon')
 
-export const load_confetti_canon_cdn = () => {
+export const load_confetti_cannon_cdn = () => {
   const script = document.createElement('script')
   script.async = true
 
@@ -157,11 +157,11 @@ export function shoot_tears(event: ConfettiEvent) {
 let i = 0
 
 export const shoot_confetti = (event: ConfettiEvent) => {
-  const round_robbin: Record<0 | 1 | 2, (o: ConfettiEvent) => void> = {
+  const round_robin: Record<0 | 1 | 2, (o: ConfettiEvent) => void> = {
     0: shoot_stars,
     1: shoot_hearts,
     2: shoot_rainbows_and_unicorns,
   }
 
-  round_robbin[(i++ % 3) as 0 | 1 | 2](event)
+  round_robin[(i++ % 3) as 0 | 1 | 2](event)
 }
