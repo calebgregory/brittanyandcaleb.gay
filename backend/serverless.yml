@@ -22,6 +22,7 @@ custom:
   user_pool_client_hosted_ui_domain: brittanyandcaleb${self:custom.version}${self:provider.stage}
   ses_template_names:
     notify_on_participant: ${self:service}-${self:provider.stage}-notify-template
+    nightly_report: ${self:service}-${self:provider.stage}-nightly-report
 
 appSync:
   name: ${self:service}
@@ -95,34 +96,26 @@ functions:
       - stream:
           type: dynamodb
           arn: { 'Fn::GetAtt': [BCDynamoDBTable, StreamArn] }
+  sendNightlyReport:
+    condition: IsProd
+    handler: build/scheduled-report/nightly.LAM_sendReportEmail
+    memorySize: 1024
+    timeout: 900
+    role: BCReportLambdaRole # <- sort of tech debt
+    environment:
+      SES_TEMPLATE_NAME: ${self:custom.ses_template_names.nightly_report}
+      SES_EMAIL_RECIPIENTS: ${env:SES_EMAIL_RECIPIENTS}
+    events:
+      - schedule: cron(0 1 * * ? *)
 
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification-format.html
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
 # ^ a man's best friend
 resources:
-  Resources:
-    # Creates a role that allows Cognito to send SES messages
-    # BCSESRole:
-    #   Type: "AWS::IAM::Role"
-    #   Properties:
-    #     AssumeRolePolicyDocument:
-    #       Version: "2012-10-17"
-    #       Statement:
-    #         - Effect: "Allow"
-    #           Principal:
-    #             Service:
-    #               - "cognito-idp.amazonaws.com"
-    #           Action:
-    #             - "sts:AssumeRole"
-    #     Policies:
-    #       - PolicyName: "CognitoSESPolicy"
-    #         PolicyDocument:
-    #           Version: "2012-10-17"
-    #           Statement:
-    #             - Effect: "Allow"
-    #               Action: "ses:publish"
-    #               Resource: "*"
+  Conditions:
+    IsProd: { 'Fn::Equals': ['${self:provider.stage}', 'prod'] }
 
+  Resources:
     BCCognitoUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
@@ -361,7 +354,58 @@ resources:
                     - ses:SendRawEmail
                   Resource:
                     - '*'
-    SESAdminCreateUserEmailTemplate:
+
+    BCReportLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:service}-${self:provider.stage}-rprt-lambda-role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          # TODO: use managed policies
+          - PolicyName: ${self:service}-${self:provider.stage}-policy-RprtLogWriter
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - 'Fn::Join':
+                        - ':'
+                        - - 'arn:aws:logs'
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - 'log-group:/aws/lambda/*:*:*'
+                - Effect: Allow
+                  Action:
+                    - dynamodb:DescribeTable
+                    - dynamodb:PutItem
+                    - dynamodb:GetItem
+                    - dynamodb:Scan
+                    - dynamodb:Query
+                    - dynamodb:DeleteItem
+                    - dynamodb:UpdateItem
+                    - dynamodb:BatchGetItem
+                    - dynamodb:BatchWriteItem
+                  Resource: { 'Fn::GetAtt': [BCDynamoDBTable, Arn] }
+                - Effect: Allow # because this thing is sending emails
+                  Action:
+                    - ses:SendTemplatedEmail
+                    - ses:SendEmail
+                    - ses:SendRawEmail
+                  Resource:
+                    - '*'
+
+    SESNotifyOnParticipantTemplate:
       Type: 'AWS::SES::Template'
       Properties:
         Template:
@@ -369,6 +413,15 @@ resources:
           SubjectPart: '🌈 🎉 It looks like we have an RSVP❣️'
           HtmlPart: ${file(email-templates/notify_on_participant/template.html)}
           TextPart: ${file(email-templates/notify_on_participant/template.txt)}
+
+    SESNightlyReportTemplate:
+      Type: 'AWS::SES::Template'
+      Properties:
+        Template:
+          TemplateName: ${self:custom.ses_template_names.nightly_report}
+          SubjectPart: "💋💘 It's nightly report time 💘💋"
+          HtmlPart: ${file(email-templates/nightly_report/template.html)}
+          TextPart: ${file(email-templates/nightly_report/template.txt)}
 
   Outputs:
     BCCognitoUserPoolId:

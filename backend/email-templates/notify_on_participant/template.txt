@@ -1,4 +1,4 @@
 Someone responded!
 
 Who: {{PKs}}
-{{all_updates}}
+{{changed_items}}

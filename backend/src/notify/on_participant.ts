@@ -2,12 +2,11 @@ import { DynamoDBStreamEvent, StreamRecord } from 'aws-lambda'
 import AWS from 'aws-sdk'
 import is_equal from 'lodash.isequal'
 
-import { config } from '../config'
 import { logger } from '../log'
 import { Participant } from '../participants/types'
+import { ses_send_email } from '../ses'
 
-const SES_TEMPLATE_NAME = process.env.SES_TEMPLATE_NAME
-const SES_EMAIL_RECIPIENTS = (process.env.SES_EMAIL_RECIPIENTS || '').split(',')
+const SES_TEMPLATE_NAME = process.env.SES_TEMPLATE_NAME || ''
 
 type ChangedAttrs = {
   [key in keyof Participant]: [any, any]
@@ -99,36 +98,6 @@ const _derive_updates = (event: DynamoDBStreamEvent): Updates => {
   return { changed_items, PKs }
 }
 
-const _ses_send_email = async (updates: Updates) => {
-  const client = new AWS.SES({ region: config.region })
-
-  if (!SES_TEMPLATE_NAME) {
-    logger.error('SES_TEMPLATE_NAME is not defined; cannot send email')
-    return
-  } else if (!SES_EMAIL_RECIPIENTS.length) {
-    logger.error('SES_EMAIL_RECIPIENTS are blank; cannot send email')
-    return
-  }
-
-  const params: AWS.SES.SendTemplatedEmailRequest = {
-    Source: 'Caleb Gregory <calebgregory@gmail.com>', // must be verified in SES
-    Destination: { ToAddresses: SES_EMAIL_RECIPIENTS }, // If your account is still in the sandbox, these addresses must be verified, too
-    Template: SES_TEMPLATE_NAME,
-    TemplateData: JSON.stringify({
-      PKs: JSON.stringify([...updates.PKs]),
-      all_updates: JSON.stringify(updates.changed_items, null, 2),
-    }),
-  }
-
-  try {
-    // Send the email using the SES client.
-    const response = await client.sendTemplatedEmail(params).promise()
-    logger.info('Email sent! Message ID:', response.MessageId)
-  } catch (error) {
-    logger.error('Error sending email', { error })
-  }
-}
-
 export const notify_on_participant_update = async (event: DynamoDBStreamEvent) => {
   const updates = _derive_updates(event)
 
@@ -137,5 +106,8 @@ export const notify_on_participant_update = async (event: DynamoDBStreamEvent) =
     return
   }
 
-  await _ses_send_email(updates)
+  await ses_send_email(SES_TEMPLATE_NAME, {
+    PKs: JSON.stringify([...updates.PKs]),
+    changed_items: JSON.stringify(updates.changed_items, null, 2),
+  })
 }
