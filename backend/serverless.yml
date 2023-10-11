@@ -96,17 +96,17 @@ functions:
       - stream:
           type: dynamodb
           arn: { 'Fn::GetAtt': [BCDynamoDBTable, StreamArn] }
-  sendNightlyReport:
-    condition: IsProd
-    handler: build/scheduled-report/nightly.LAM_sendReportEmail
-    memorySize: 1024
-    timeout: 900
-    role: BCReportLambdaRole # <- sort of tech debt
-    environment:
-      SES_TEMPLATE_NAME: ${self:custom.ses_template_names.nightly_report}
-      SES_EMAIL_RECIPIENTS: ${env:SES_EMAIL_RECIPIENTS}
-    events:
-      - schedule: cron(0 1 * * ? *)
+  # sendNightlyReport:
+  #   condition: IsProd
+  #   handler: build/scheduled-report/nightly.LAM_sendReportEmail
+  #   memorySize: 1024
+  #   timeout: 900
+  #   role: BCReportLambdaRole # <- sort of tech debt
+  #   environment:
+  #     SES_TEMPLATE_NAME: ${self:custom.ses_template_names.nightly_report}
+  #     SES_EMAIL_RECIPIENTS: ${env:SES_EMAIL_RECIPIENTS}
+  #   events:
+  #     - schedule: cron(0 1 * * ? *)
 
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification-format.html
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html

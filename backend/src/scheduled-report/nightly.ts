@@ -13,12 +13,13 @@ type TemplateData = {
 }
 
 const _build_report = (participants: Participant[]): TemplateData => {
-  const participants_and_guests: [string, string[]][] = participants.map((p) => [
+  const participants_attending = participants.filter((p) => p.attending)
+  const participants_and_guests: [string, string[]][] = participants_attending.map((p) => [
     `${p.given_name} ${p.family_name}`,
     p.guests.map(({ name }) => name),
   ])
 
-  const count = participants.reduce<number>((sum, p) => sum + p.guests.length + 1, 0)
+  const count = participants_attending.reduce<number>((sum, p) => sum + p.guests.length + 1, 0)
 
   return { participants_and_guests, count }
 }
